@@ -59,9 +59,9 @@ interface SessionInterface
     /**
      * Retourne si un index existe dans le tableau de session.
      *
-     * @param string $key Identifiant de la propriété de session qui nous intéresse.
+     * @param string|array $key Identifiant de la propriété de session qui nous intéresse.
      */
-    public function has(string $key): bool;
+    public function has($key): bool;
 
     /**
      * Supprimer une ou plusieurs propriétés de session.
