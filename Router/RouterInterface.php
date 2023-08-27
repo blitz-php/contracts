@@ -11,18 +11,11 @@
 
 namespace BlitzPHP\Contracts\Router;
 
-use Psr\Http\Message\ServerRequestInterface;
-
 /**
  * Comportement attendu d'un routeur.
  */
 interface RouterInterface
 {
-    /**
-     * Stocke une référence à l'objet RouteCollection.
-     */
-    public function init(RouteCollectionInterface $routes, ServerRequestInterface $request);
-
     /**
      * Analyse l'URI et tente de faire correspondre l'URI actuel au
      * l'une des routes définies dans la RouteCollection.
