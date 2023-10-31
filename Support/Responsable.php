@@ -16,7 +16,8 @@ interface Responsable
     /**
      * Créez une réponse HTTP qui représente l'objet.
      *
-     * @param  \Psr\Http\Message\ServerRequestInterface  $request
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function toResponse($request);

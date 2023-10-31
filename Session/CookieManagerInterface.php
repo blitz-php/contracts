@@ -28,14 +28,14 @@ interface CookieManagerInterface
      */
     public function forget(string $name, array $options = []): CookieInterface;
 
-	/**
-	 * Recupere la valeur d'un cookie et cree une intance de Cookie avec
-	 * Si aucun cookie avec ce nom n'existe renvoie null
-	 */
+    /**
+     * Recupere la valeur d'un cookie et cree une intance de Cookie avec
+     * Si aucun cookie avec ce nom n'existe renvoie null
+     */
     public function get(string $name, array $options = []): ?CookieInterface;
 
-	/**
-	 * Verifie si un cookie existe
-	 */
+    /**
+     * Verifie si un cookie existe
+     */
     public function has(string $name): bool;
 }

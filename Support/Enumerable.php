@@ -81,7 +81,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Alias pour la méthode "avg".
      *
-     * @param  (callable(mixed): float|int)|string|null  $callback
+     * @param (callable(mixed): float|int)|string|null $callback
      *
      * @return float|int|null
      */
@@ -115,21 +115,21 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Alias pour la méthode "contains".
      *
-     * @param  (callable(mixed, mixed): bool)|mixed|string  $key
+     * @param (callable(mixed, mixed): bool)|mixed|string $key
      */
     public function some($key, mixed $operator = null, mixed $value = null): bool;
 
     /**
      * Déterminez si un élément existe, en utilisant une comparaison stricte.
      *
-     * @param  (callable(mixed): bool)|mixed|array-key  $key
+     * @param (callable(mixed): bool)|array-key|mixed $key
      */
     public function containsStrict($key, mixed $value = null): bool;
 
     /**
      * Obtenir la valeur moyenne d'une clé donnée.
      *
-     * @param  (callable(mixed): float|int)|string|null  $callback
+     * @param (callable(mixed): float|int)|string|null $callback
      *
      * @return float|int|null
      */
@@ -138,7 +138,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Détermine si un élément existe dans l'énumérable.
      *
-     * @param  (callable(mixed, mixed): bool)|mixed|string  $key
+     * @param (callable(mixed, mixed): bool)|mixed|string $key
      */
     public function contains($key, mixed $operator = null, mixed $value = null): bool;
 
@@ -232,7 +232,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupérer les éléments en double.
      *
-     * @param  (callable(mixed): bool)|string|null  $callback
+     * @param (callable(mixed): bool)|string|null $callback
      *
      * @return static
      */
@@ -241,7 +241,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupérez les éléments en double à l'aide d'une comparaison stricte.
      *
-     * @param  (callable(mixed): bool)|string|null  $callback
+     * @param (callable(mixed): bool)|string|null $callback
      *
      * @return static
      */
@@ -266,7 +266,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Déterminez si tous les éléments réussissent le test de vérité donné.
      *
-     * @param  (callable(mixed, mixed): bool)|mixed|string  $key
+     * @param (callable(mixed, mixed): bool)|mixed|string $key
      */
     public function every($key, ?string $operator = null, mixed $value = null): bool;
 
@@ -282,7 +282,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Exécutez un filtre sur chacun des éléments.
      *
-     * @param  (callable(mixed): bool)|null  $callback
+     * @param (callable(mixed): bool)|null $callback
      *
      * @return static
      */
@@ -291,8 +291,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Appliquez le callback si la "valeur" donnée est (ou se résout) véridique.
      *
-     * @param  (callable($this): mixed)|null  $callback
-     * @param  (callable($this): mixed)|null  $default
+     * @param (callable($this): mixed)|null $callback
+     * @param (callable($this): mixed)|null $default
      *
      * @return $this|mixed
      */
@@ -301,8 +301,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Appliquez le callback si la collection est vide.
      *
-     * @param  (callable($this): mixed)  $callback
-     * @param  (callable($this): mixed)|null  $default
+     * @param (callable($this): mixed)      $callback
+     * @param (callable($this): mixed)|null $default
      *
      * @return $this|mixed
      */
@@ -311,8 +311,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Appliquez le callback si la collection n'est pas vide.
      *
-     * @param  (callable($this): mixed)  $callback
-     * @param  (callable($this): mixed)|null  $default
+     * @param (callable($this): mixed)      $callback
+     * @param (callable($this): mixed)|null $default
      *
      * @return $this|mixed
      */
@@ -323,9 +323,9 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @template TUnlessReturnType
      *
-     * @param bool $value
-     * @param  (callable($this): TUnlessReturnType)  $callback
-     * @param  (callable($this): TUnlessReturnType)|null  $default
+     * @param bool                                      $value
+     * @param (callable($this): TUnlessReturnType)      $callback
+     * @param (callable($this): TUnlessReturnType)|null $default
      *
      * @return $this|TUnlessReturnType
      */
@@ -334,8 +334,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Appliquez le callback seulement si la collection est vide.
      *
-     * @param callable($this): mixed $callback
-     * @param  (callable($this): mixed)|null  $default
+     * @param callable($this): mixed        $callback
+     * @param (callable($this): mixed)|null $default
      *
      * @return $this|mixed
      */
@@ -344,8 +344,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Appliquez le callback seulement si la collection n'est pas vide.
      *
-     * @param callable($this): mixed $callback
-     * @param  (callable($this): mixed)|null  $default
+     * @param callable($this): mixed        $callback
+     * @param (callable($this): mixed)|null $default
      *
      * @return $this|mixed
      */
@@ -445,8 +445,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir le premier élément de l'énumérable réussissant le test de vérité donné.
      *
-     * @param  (callable(mixed,mixed): bool)|null  $callback
-     * @param  mixed|(\Closure(): mixed)  $default
+     * @param (callable(mixed,mixed): bool)|null $callback
+     * @param (\Closure(): mixed)|mixed          $default
      *
      * @return mixed
      */
@@ -476,13 +476,13 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenez un article de la collection par clé.
      */
-    public function get(int|string|null $key, mixed $default = null): mixed;
+    public function get(null|int|string $key, mixed $default = null): mixed;
 
     /**
      * Regroupez un tableau associatif par un champ ou à l'aide d'un callback.
      *
-     * @param  (callable(mixed, int|string $key): int|string)|array|string  $groupBy
-     * @param mixed $groupBy
+     * @param (callable(mixed, int|string $key): int|string)|array|string $groupBy
+     * @param mixed                                                       $groupBy
      *
      * @return static
      */
@@ -491,8 +491,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Saisissez un tableau associatif par un champ ou à l'aide d'un callback.
      *
-     * @param  (callable(mixed, int|string $key): int|string)|array|string  $keyBy
-     * @param mixed $keyBy
+     * @param (callable(mixed, int|string $key): int|string)|array|string $keyBy
+     * @param mixed                                                       $keyBy
      *
      * @return static
      */
@@ -561,15 +561,15 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenez le dernier élément de la collection.
      *
-     * @param  (callable(mixed, mixed $key): bool)|null  $callback
-     * @param  mixed|(Closure(): mixed)  $default
+     * @param (callable(mixed, mixed $key): bool)|null $callback
+     * @param (Closure(): mixed)|mixed                 $default
      */
     public function last(?callable $callback = null, $default = null): mixed;
 
     /**
      * Exécutez une map sur chacun des éléments.
      *
-     * @param  callable(mixed $value, mixed $key): mixed  $callback
+     * @param callable(mixed $value, mixed $key): mixed $callback
      *
      * @return static
      */
@@ -589,7 +589,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * Le rappel doit renvoyer un tableau associatif avec une seule paire clé/valeur.
      *
-     * @param  callable(mixed $value, mixed $key): array  $callback
+     * @param callable(mixed $value, mixed $key): array $callback
      *
      * @return static
      */
@@ -675,8 +675,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir la valeur minimale d'une clé donnée.
      *
-     * @param  (callable(mixed $value):mixed)|string|null  $callback
-     * @param mixed|null $callback
+     * @param (callable(mixed $value):mixed)|string|null $callback
+     * @param mixed|null                                 $callback
      *
      * @return mixed
      */
@@ -685,8 +685,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir la valeur maximale d'une clé donnée.
      *
-     * @param  (callable(mixed $value):mixed)|string|null  $callback
-     * @param mixed|null $callback
+     * @param (callable(mixed $value):mixed)|string|null $callback
+     * @param mixed|null                                 $callback
      *
      * @return mixed
      */
@@ -718,8 +718,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Partitionnez la collection en deux tableaux à l'aide du callback ou de la clé donnés.
      *
-     * @param  (callable(mixed $value, mixed $key): bool)|mixed|string  $key
-     * @param mixed $key
+     * @param (callable(mixed $value, mixed $key): bool)|mixed|string $key
+     * @param mixed                                                   $key
      *
      * @return static<int<0, 1>, static>
      */
@@ -791,8 +791,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Recherche dans la collection une valeur donnée et renvoie la clé correspondante en cas de succès.
      *
-     * @param  mixed|callable(mixed $item, string|int $key): bool  $value
-     * @param mixed $value
+     * @param callable(mixed $item, int|string $key): bool|mixed $value
+     * @param mixed                                              $value
      *
      * @return bool|int|string
      */
@@ -822,8 +822,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Ignorer les éléments de la collection jusqu'à ce que la condition donnée soit remplie.
      *
-     * @param  mixed|callable(mixed,int|string $key): bool  $value
-     * @param mixed $value
+     * @param callable(mixed,int|string $key): bool|mixed $value
+     * @param mixed                                       $value
      *
      * @return static
      */
@@ -832,8 +832,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Ignorer les éléments de la collection tant que la condition donnée est remplie.
      *
-     * @param  mixed|callable(mixed, int|string $key): bool  $value
-     * @param mixed $value
+     * @param callable(mixed, int|string $key): bool|mixed $value
+     * @param mixed                                        $value
      *
      * @return static
      */
@@ -856,7 +856,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupère le premier élément de la collection, mais uniquement s'il existe exactement un élément. Sinon, lancez une exception.
      *
-     * @param  (callable(mixed, int|string $key): bool)|string  $key
+     * @param (callable(mixed, int|string $key): bool)|string $key
      *
      * @throws ItemNotFoundException
      * @throws MultipleItemsFoundException
@@ -866,7 +866,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupère le premier élément de la collection mais lève une exception si aucun élément correspondant n'existe.
      *
-     * @param  (callable(mixed, int|string $key): bool)|string  $key
+     * @param (callable(mixed, int|string $key): bool)|string $key
      *
      * @throws ItemNotFoundException
      */
@@ -880,7 +880,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Coupez la collection en morceaux avec un callback.
      *
-     * @param  callable(mixed, int|string $key, static<int, mixed>): bool  $callback
+     * @param callable(mixed, int|string $key, static<int, mixed>): bool $callback
      *
      * @return static<int, static<int, mixed>>
      */
@@ -896,7 +896,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Triez chaque élément avec un callback.
      *
-     * @param  (callable(mixed, mixed): int)|null|int  $callback
+     * @param (callable(mixed, mixed): int)|int|null $callback
      *
      * @return static
      */
@@ -912,7 +912,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Trier la collection à l'aide du rappel donné.
      *
-     * @param  array<int|string, (callable(mixed, mixed): mixed)|(callable(mixed, int|string): mixed)|string|array{string, string}>|(callable(mixed, int|string): mixed)|string  $callback
+     * @param (callable(mixed, int|string): mixed)|array<int|string, (callable(mixed, int|string): mixed)|(callable(mixed, mixed): mixed)|array{string, string}|string>|string $callback
      *
      * @return static
      */
@@ -921,7 +921,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Triez la collection dans l'ordre décroissant à l'aide du rappel donné.
      *
-     * @param  array<int|string, (callable(mixed, mixed): mixed)|(callable(mixed, int|string): mixed)|string|array{string, string}>|(callable(mixed, int|string): mixed)|string  $callback
+     * @param (callable(mixed, int|string): mixed)|array<int|string, (callable(mixed, int|string): mixed)|(callable(mixed, mixed): mixed)|array{string, string}|string>|string $callback
      *
      * @return static
      */
@@ -953,8 +953,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir la somme des valeurs données.
      *
-     * @param  (callable(mixed $value): mixed)|string|null  $callback
-     * @param mixed|null $callback
+     * @param (callable(mixed $value): mixed)|string|null $callback
+     * @param mixed|null                                  $callback
      *
      * @return mixed
      */
@@ -1029,8 +1029,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Créez une collection de tous les éléments qui ne réussissent pas un test de vérité donné.
      *
-     * @param  (callable(mixed $value, mixed $key): bool)|bool|mixed  $callback
-     * @param mixed $callback
+     * @param (callable(mixed $value, mixed $key): bool)|bool|mixed $callback
+     * @param mixed                                                 $callback
      *
      * @return static
      */
@@ -1046,8 +1046,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Renvoie uniquement les éléments uniques du tableau de collection.
      *
-     * @param  (callable(mixed $item, int|string $key): mixed)|string|null  $key
-     * @param mixed|null $key
+     * @param (callable(mixed $item, int|string $key): mixed)|string|null $key
+     * @param mixed|null                                                  $key
      *
      * @return static
      */
@@ -1056,8 +1056,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Renvoie uniquement les éléments uniques du tableau de collection en utilisant une comparaison stricte.
      *
-     * @param  (callable(mixed $value, mixed $key): mixed)|string|null  $key
-     * @param mixed|null $key
+     * @param (callable(mixed $value, mixed $key): mixed)|string|null $key
+     * @param mixed|null                                              $key
      *
      * @return static
      */
@@ -1090,7 +1090,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Comptez le nombre d'éléments de la collection par un champ ou à l'aide d'un callback.
      *
-     * @param  (callable(mixed, int|string): int|string)|string|null  $countBy
+     * @param (callable(mixed, int|string): int|string)|string|null $countBy
      *
      * @return static<int|string, int>
      */

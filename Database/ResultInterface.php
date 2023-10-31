@@ -23,7 +23,7 @@ interface ResultInterface
      *
      * @param int|string|null $type Le type d'objet de résultat. 'tableau', 'objet', nom de classe ou constante d'extraction PDO.
      */
-    public function result(int|string|null $type = 'object'): array;
+    public function result(null|int|string $type = 'object'): array;
 
     /**
      * Renvoie les résultats sous la forme d'un tableau de tableaux.
@@ -50,7 +50,7 @@ interface ResultInterface
      *
      * @return mixed
      */
-    public function row(int $index, int|string|null $type = 'object');
+    public function row(int $index, null|int|string $type = 'object');
 
     /**
      * Renvoie la "première" ligne des résultats actuels.
@@ -59,7 +59,7 @@ interface ResultInterface
      *
      * @return mixed
      */
-    public function first(int|string|null $type = 'object');
+    public function first(null|int|string $type = 'object');
 
     /**
      * Returns the "last" row of the current results.
@@ -68,7 +68,7 @@ interface ResultInterface
      *
      * @return mixed
      */
-    public function last(int|string|null $type = 'object');
+    public function last(null|int|string $type = 'object');
 
     /**
      * Renvoie la ligne "suivante" des résultats actuels.
@@ -77,7 +77,7 @@ interface ResultInterface
      *
      * @return mixed
      */
-    public function next(int|string|null $type = 'object');
+    public function next(null|int|string $type = 'object');
 
     /**
      * Renvoie la ligne "précédente" des résultats actuels.
@@ -86,7 +86,7 @@ interface ResultInterface
      *
      * @return mixed
      */
-    public function previous(int|string|null $type = 'object');
+    public function previous(null|int|string $type = 'object');
 
     /**
      * Renvoie une ligne non tamponnée et déplace le pointeur vers la ligne suivante.
@@ -95,7 +95,7 @@ interface ResultInterface
      *
      * @return mixed
      */
-    public function unbufferedRow(int|string|null $type = 'object');
+    public function unbufferedRow(null|int|string $type = 'object');
 
     /**
      * Obtient le nombre de champs dans le jeu de résultats.

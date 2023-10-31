@@ -18,20 +18,20 @@ interface ConnectionResolverInterface
      */
     public function connection(?string $name = null): ConnectionInterface;
 
-	/**
-	* Ouvre une connexion a la base de donnees
-	*
-	* @param array|ConnectionInterface|string|null $group  Nom du groupe de connexion à utiliser, ou un tableau de paramètres de configuration.
-	* @param bool                                  $shared Doit-on retourner une instance partagée
-	*/
-   public function connect($group = null, bool $shared = true): ConnectionInterface;
+    /**
+     * Ouvre une connexion a la base de donnees
+     *
+     * @param array|ConnectionInterface|string|null $group  Nom du groupe de connexion à utiliser, ou un tableau de paramètres de configuration.
+     * @param bool                                  $shared Doit-on retourner une instance partagée
+     */
+    public function connect($group = null, bool $shared = true): ConnectionInterface;
 
-   /**
-   * Recupere les informations a utiliser pour la connexion a la base de données
-   *
-   * @return array [group, configuration]
-   */
-  public function connectionInfo(array|string|null $group = null): array;
+    /**
+     * Recupere les informations a utiliser pour la connexion a la base de données
+     *
+     * @return array [group, configuration]
+     */
+    public function connectionInfo(null|array|string $group = null): array;
 
     /**
      * Get the default connection name.

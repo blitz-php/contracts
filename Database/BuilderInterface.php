@@ -86,7 +86,7 @@ interface BuilderInterface
      *
      * @param string|string[] $field Un nom de champ ou un tableau de champs
      */
-    public function orderBy(string|array $field, string $direction = 'ASC', bool $escape = true): self;
+    public function orderBy(array|string $field, string $direction = 'ASC', bool $escape = true): self;
 
     /**
      * Ajoute des champs à regrouper.
@@ -149,7 +149,7 @@ interface BuilderInterface
      *
      * @return ResultInterface|self|string
      */
-    public function update(array|string|object $data = [], bool $escape = true, bool $execute = true);
+    public function update(array|object|string $data = [], bool $escape = true, bool $execute = true);
 
     /**
      * Construit une requête de remplacement (REPLACE INTO).
@@ -298,7 +298,7 @@ interface BuilderInterface
      *
      * @return mixed|mixed[] La valeur du/des champs
      */
-    public function value(string|array $name, ?string $key = null, int $expire = 0);
+    public function value(array|string $name, ?string $key = null, int $expire = 0);
 
     /**
      * Recupere les valeurs d'un ou de plusieurs champs.
@@ -309,7 +309,7 @@ interface BuilderInterface
      *
      * @return mixed[] La/les valeurs du/des champs
      */
-    public function values(string|array $name, ?string $key = null, int $expire = 0): array;
+    public function values(array|string $name, ?string $key = null, int $expire = 0): array;
 
     /**
      * Recupere la requete sql courrante et reinitialise le builder.

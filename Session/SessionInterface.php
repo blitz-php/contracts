@@ -59,7 +59,7 @@ interface SessionInterface
     /**
      * Retourne si un index existe dans le tableau de session.
      *
-     * @param string|array $key Identifiant de la propriété de session qui nous intéresse.
+     * @param array|string $key Identifiant de la propriété de session qui nous intéresse.
      */
     public function has($key): bool;
 
@@ -84,7 +84,7 @@ interface SessionInterface
      * @param array|string                            $data  Identificateur de propriété ou tableau associatif de propriétés
      * @param array|bool|float|int|object|string|null $value Valeur de la propriété si $data est un scalaire
      */
-    public function setFlashdata(array|string $data, array|bool|float|int|object|string|null $value = null): void;
+    public function setFlashdata(array|string $data, null|array|bool|float|int|object|string $value = null): void;
 
     /**
      * Récupérez un ou plusieurs éléments de données flash de la session.
@@ -135,7 +135,7 @@ interface SessionInterface
      * @param array|bool|float|int|object|string|null $value Valeur à stocker
      * @param int                                     $ttl   Durée de vie en secondes
      */
-    public function setTempdata(array|string $data, array|bool|float|int|object|string|null $value = null, int $ttl = 300): void;
+    public function setTempdata(array|string $data, null|array|bool|float|int|object|string $value = null, int $ttl = 300): void;
 
     /**
      * Renvoie soit un seul élément de données temporaires, soit toutes les données temporaires actuellement

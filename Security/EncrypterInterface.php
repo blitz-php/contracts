@@ -25,12 +25,12 @@ interface EncrypterInterface
      *
      * @param array|string|null $params Paramètres remplacés, en particulier la clé
      */
-    public function encrypt(string $data, array|string|null $params = null): string;
+    public function encrypt(string $data, null|array|string $params = null): string;
 
     /**
      * Décrypter - convertir le texte chiffré en texte brut
-	 *
+     *
      * @param array|string|null $params Paramètres remplacés, en particulier la clé
      */
-    public function decrypt(string $data, array|string|null $params = null): string;
+    public function decrypt(string $data, null|array|string $params = null): string;
 }

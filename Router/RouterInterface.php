@@ -20,8 +20,6 @@ interface RouterInterface
      * Analyse l'URI et tente de faire correspondre l'URI actuel au
      * l'une des routes définies dans la RouteCollection.
      *
-     * @param string $uri
-     *
      * @return mixed
      */
     public function handle(?string $uri = null);
