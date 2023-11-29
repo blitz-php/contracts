@@ -33,4 +33,9 @@ interface EncrypterInterface
      * @param array|string|null $params Paramètres remplacés, en particulier la clé
      */
     public function decrypt(string $data, null|array|string $params = null): string;
+
+	/**
+	 * Obtenir la clé de chiffrement que le chiffreur utilise actuellement.
+	 */
+	public function getKey(): string;
 }
