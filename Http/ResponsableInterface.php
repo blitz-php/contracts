@@ -12,8 +12,14 @@
 namespace BlitzPHP\Contracts\Http;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface ResponsableInterface
 {
     public function getResponse(): ResponseInterface;
+
+    /**
+     * Créez une réponse HTTP qui représente l'objet.
+     */
+    public function toResponse(ServerRequestInterface $request): ResponseInterface;
 }
