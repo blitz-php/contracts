@@ -28,6 +28,11 @@ interface EventManagerInterface
      *
      * @return bool vrai en cas de succès faux en cas d'échec
      */
+    public function on(string $event, callable $callback, int $priority = 0): bool;
+
+	/**
+     * @deprecated use on() instead
+     */
     public function attach(string $event, callable $callback, int $priority = 0): bool;
 
     /**
@@ -37,6 +42,11 @@ interface EventManagerInterface
      * @param callable $callback une fonction appelable
      *
      * @return bool vrai en cas de succès faux en cas d'échec
+     */
+    public function off(string $event, callable $callback): bool;
+
+	/**
+     * @deprecated use off() instead
      */
     public function detach(string $event, callable $callback): bool;
 
@@ -55,6 +65,11 @@ interface EventManagerInterface
      * @param array|object          $argv
      *
      * @return mixed
+     */
+    public function emit($event, $target = null, $argv = []);
+
+    /**
+     * @deprecated use emit() instead
      */
     public function trigger($event, $target = null, $argv = []);
 }

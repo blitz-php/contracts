@@ -16,5 +16,5 @@ interface EventListenerInterface
     /**
      * Ecouteur d'evenement
      */
-    public function listen(EventManagerInterface $event): void;
+    public function listen(EventManagerInterface $manager): void;
 }
