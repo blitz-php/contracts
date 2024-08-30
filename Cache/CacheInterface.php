@@ -9,7 +9,7 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace BlitzPHP\Cache;
+namespace BlitzPHP\Contracts\Cache;
 
 use Psr\SimpleCache\CacheInterface as PsrCacheInterface;
 
