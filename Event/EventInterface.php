@@ -19,6 +19,10 @@ namespace BlitzPHP\Contracts\Event;
  */
 interface EventInterface
 {
+	public const PRIORITY_LOW    = 200;
+    public const PRIORITY_NORMAL = 100;
+    public const PRIORITY_HIGH   = 10;
+
     /**
      * Obtenir le nom de l'événement
      */
@@ -63,7 +67,7 @@ interface EventInterface
     /**
      * Indiquez si vous souhaitez ou non arrêter la propagation de cet événement
      */
-    public function stopPropagation(bool $flag): void;
+    public function stopPropagation(bool $flag = true): void;
 
     /**
      * Cet événement a-t-il indiqué que la propagation de l'événement devait s'arrêter ?

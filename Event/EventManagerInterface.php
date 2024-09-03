@@ -53,7 +53,7 @@ interface EventManagerInterface
     /**
      * Effacer tous les écouteurs pour un événement donné
      */
-    public function clearListeners(string $event): void;
+    public function clearListeners(string $event = null): void;
 
     /**
      * Déclencher un événement
