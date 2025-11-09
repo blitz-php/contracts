@@ -12,24 +12,34 @@
 namespace BlitzPHP\Contracts\Support;
 
 use CachingIterator;
+use Closure;
 use Countable;
 use Exception;
-use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
 
 /**
- * @credit <a href="https://github.com/tighten/collect">Tightenco\Collect\Support\Enumerable</a>
+ * @template TKey of array-key
+ *
+ * @template-covariant TValue
+ *
+ * @extends Arrayable<TKey, TValue>
+ * @extends \IteratorAggregate<TKey, TValue>
+ *
+ * @credit <a href="https://laravel.com">Laravel - Illuminate\Support\Enumerable (/src/Illuminate/Collection/Enumerable.php)</a>
  */
 interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, JsonSerializable
 {
     /**
      * Créez une nouvelle instance de collection si la valeur n'en est pas déjà une.
      *
-     * @param Arrayable|iterable|null $items
+     * @template TMakeKey of array-key
+     * @template TMakeValue
      *
-     * @return static
+     * @param Arrayable<TMakeKey, TMakeValue>|iterable<TMakeKey, TMakeValue>|null  $items
+	 *
+     * @return static<TMakeKey, TMakeValue>
      */
     public static function make($items = []);
 
@@ -45,24 +55,32 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @param int|string $from
      * @param int|string $to
+     * @param float|int  $step
      *
      * @return static
      */
-    public static function range($from, $to);
+    public static function range($from, $to, $step = 1);
 
     /**
      * Enveloppez la valeur donnée dans une collection, le cas échéant.
      *
-     * @param iterable|mixed $value
+     * @template TWrapValue
      *
-     * @return static
+     * @param iterable<array-key, TWrapValue>|TWrapValue  $value
+	 *
+     * @return static<array-key, TWrapValue>
      */
     public static function wrap($value);
 
     /**
      * Obtenez les éléments sous-jacents de la collection donnée, le cas échéant.
      *
-     * @param array|static $value
+     * @template TUnwrapKey of array-key
+     * @template TUnwrapValue
+     *
+     * @param array<TUnwrapKey, TUnwrapValue>|static<TUnwrapKey, TUnwrapValue> $value
+	 *
+     * @return array<TUnwrapKey, TUnwrapValue>
      */
     public static function unwrap($value): array;
 
@@ -75,13 +93,15 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Récupère tous les éléments de l'énumérable.
+     *
+     * @return array<TKey, TValue>
      */
     public function all(): array;
 
     /**
      * Alias pour la méthode "avg".
      *
-     * @param (callable(mixed): float|int)|string|null $callback
+     * @param (callable(TValue): float|int)|string|null $callback
      *
      * @return float|int|null
      */
@@ -90,8 +110,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir la médiane d'une clé donnée.
      *
-     * @param array|string|null $key
-     *
+     * @param string|array<array-key, string>|null  $key
+	 *
      * @return float|int|null
      */
     public function median($key = null);
@@ -99,7 +119,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir le mode d'une clé donnée.
      *
-     * @param array|string|null $key
+     * @param string|array<array-key, string>|null $key
      *
      * @return array<int, float|int>|null
      */
@@ -115,21 +135,22 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Alias pour la méthode "contains".
      *
-     * @param (callable(mixed, mixed): bool)|mixed|string $key
+     * @param (callable(TValue, TKey): bool)|TValue|string $key
      */
     public function some($key, mixed $operator = null, mixed $value = null): bool;
 
     /**
      * Déterminez si un élément existe, en utilisant une comparaison stricte.
      *
-     * @param (callable(mixed): bool)|array-key|mixed $key
+     * @param (callable(TValue): bool)|TValue|array-key $key
+     * @param TValue|null $value
      */
     public function containsStrict($key, mixed $value = null): bool;
 
     /**
      * Obtenir la valeur moyenne d'une clé donnée.
      *
-     * @param (callable(mixed): float|int)|string|null $callback
+     * @param (callable(TValue): float|int)|string|null $callback
      *
      * @return float|int|null
      */
@@ -138,21 +159,26 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Détermine si un élément existe dans l'énumérable.
      *
-     * @param (callable(mixed, mixed): bool)|mixed|string $key
+     * @param (callable(TValue, TKey): bool)|TValue|string $key
      */
     public function contains($key, mixed $operator = null, mixed $value = null): bool;
 
     /**
      * Détermine si un élément n'est pas contenu dans la collection.
+     *
+     * @param (callable(TValue, TKey): bool)|TValue|string $key
      */
-    public function doesntContain(mixed $key, ?string $operator = null, mixed $value = null): bool;
+    public function doesntContain(mixed $key, mixed $operator = null, mixed $value = null): bool;
 
     /**
      * Jointure croisée avec les listes données, renvoyant toutes les permutations possibles.
      *
-     * @param Arrayable|iterable ...$lists
+     * @template TCrossJoinKey
+     * @template TCrossJoinValue
      *
-     * @return static<int, array<int, mixed>>
+     * @param  Arrayable<TCrossJoinKey, TCrossJoinValue>|iterable<TCrossJoinKey, TCrossJoinValue>  ...$lists
+     *
+     * @return static<int, array<int, TValue|TCrossJoinValue>>
      */
     public function crossJoin(...$lists);
 
@@ -175,17 +201,17 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupère les éléments qui ne sont pas présents dans les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
      *
-     * @return static
+     * @return static<TKey, TValue>
      */
     public function diff($items);
 
     /**
      * Obtenez les éléments qui ne sont pas présents dans les éléments donnés, à l'aide du callback.
      *
-     * @param Arrayable|iterable          $items
-     * @param callable(mixed, mixed): int $callback
+     * @param Arrayable<array-key, TValue>|iterable<array-key, TValue>  $items
+     * @param callable(TValue, TValue): int  $callback
      *
      * @return static
      */
@@ -194,7 +220,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupère les éléments dont les clés et les valeurs ne sont pas présentes dans les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue>  $items
      *
      * @return static
      */
@@ -203,8 +229,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenez les éléments dont les clés et les valeurs ne sont pas présentes dans les éléments donnés, à l'aide du callback.
      *
-     * @param Arrayable|iterable          $items
-     * @param callable(mixed, mixed): int $callback
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue>  $items
+     * @param callable(TKey, TKey): int  $callback
      *
      * @return static
      */
@@ -213,7 +239,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupère les éléments dont les clés ne sont pas présentes dans les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, mixed>|iterable<TKey, mixed>  $items
      *
      * @return static
      */
@@ -222,8 +248,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Get the items whose keys are not present in the given items, using the callback.
      *
-     * @param Arrayable|iterable                    $items
-     * @param callable(int|string, int|string): int $callback
+     * @param Arrayable<TKey, mixed>|iterable<TKey, mixed>  $items
+     * @param callable(TKey, TKey): int  $callback
      *
      * @return static
      */
@@ -231,8 +257,10 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Récupérer les éléments en double.
+	 *
+	 * @template TMapValue
      *
-     * @param (callable(mixed): bool)|string|null $callback
+     * @param (callable(TValue): TMapValue)|string|null  $callback
      *
      * @return static
      */
@@ -241,7 +269,9 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupérez les éléments en double à l'aide d'une comparaison stricte.
      *
-     * @param (callable(mixed): bool)|string|null $callback
+     * @template TMapValue
+     *
+     * @param (callable(TValue): TMapValue)|string|null  $callback
      *
      * @return static
      */
@@ -250,7 +280,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Exécutez un callback sur chaque élément.
      *
-     * @param callable(mixed, mixed): mixed $callback
+     * @param callable(TValue, TKey): mixed $callback
      *
      * @return $this
      */
@@ -266,15 +296,15 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Déterminez si tous les éléments réussissent le test de vérité donné.
      *
-     * @param (callable(mixed, mixed): bool)|mixed|string $key
+     * @param (callable(TValue, TKey): bool)|TValue|string $key
      */
     public function every($key, ?string $operator = null, mixed $value = null): bool;
 
     /**
      * Obtient tous les éléments sauf ceux avec les clés spécifiées.
      *
-     * @param array|Enumerable|mixed $keys
-     *
+     * @param Enumerable<array-key, TKey>|array<array-key, TKey>|string  $keys
+	 *
      * @return static
      */
     public function except($keys);
@@ -282,7 +312,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Exécutez un filtre sur chacun des éléments.
      *
-     * @param (callable(mixed): bool)|null $callback
+     * @param (callable(TValue, TKey): bool)|null  $callback
      *
      * @return static
      */
@@ -291,30 +321,36 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Appliquez le callback si la "valeur" donnée est (ou se résout) véridique.
      *
-     * @param (callable($this): mixed)|null $callback
-     * @param (callable($this): mixed)|null $default
+     * @template TWhenReturnType as null
      *
-     * @return $this|mixed
+     * @param (callable($this): TWhenReturnType)|null $callback
+     * @param (callable($this): TWhenReturnType)|null $default
+	 *
+     * @return $this|TWhenReturnType
      */
     public function when(bool $value, ?callable $callback = null, ?callable $default = null);
 
     /**
      * Appliquez le callback si la collection est vide.
      *
-     * @param (callable($this): mixed)      $callback
-     * @param (callable($this): mixed)|null $default
+     * @template TWhenEmptyReturnType
      *
-     * @return $this|mixed
+     * @param (callable($this): TWhenEmptyReturnType) $callback
+     * @param (callable($this): TWhenEmptyReturnType)|null $default
+	 *
+     * @return $this|TWhenEmptyReturnType
      */
     public function whenEmpty(callable $callback, ?callable $default = null);
 
     /**
      * Appliquez le callback si la collection n'est pas vide.
      *
-     * @param (callable($this): mixed)      $callback
-     * @param (callable($this): mixed)|null $default
+     * @template TWhenNotEmptyReturnType
      *
-     * @return $this|mixed
+     * @param callable($this): TWhenNotEmptyReturnType $callback
+     * @param (callable($this): TWhenNotEmptyReturnType)|null $default
+	 *
+     * @return $this|TWhenNotEmptyReturnType
      */
     public function whenNotEmpty(callable $callback, ?callable $default = null);
 
@@ -334,20 +370,24 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Appliquez le callback seulement si la collection est vide.
      *
-     * @param callable($this): mixed        $callback
-     * @param (callable($this): mixed)|null $default
+     * @template TUnlessEmptyReturnType
      *
-     * @return $this|mixed
+     * @param callable($this): TUnlessEmptyReturnType $callback
+     * @param (callable($this): TUnlessEmptyReturnType)|null $default
+	 *
+     * @return $this|TUnlessEmptyReturnType
      */
     public function unlessEmpty(callable $callback, ?callable $default = null);
 
     /**
      * Appliquez le callback seulement si la collection n'est pas vide.
      *
-     * @param callable($this): mixed        $callback
-     * @param (callable($this): mixed)|null $default
+     * @template TUnlessNotEmptyReturnType
      *
-     * @return $this|mixed
+     * @param callable($this): TUnlessNotEmptyReturnType $callback
+     * @param (callable($this): TUnlessNotEmptyReturnType)|null $default
+	 *
+     * @return $this|TUnlessNotEmptyReturnType
      */
     public function unlessNotEmpty(callable $callback, ?callable $default = null);
 
@@ -356,7 +396,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * @return static
      */
-    public function where(string $key, ?string $operator = null, mixed $value = null);
+    public function where(string $key, mixed $operator = null, mixed $value = null);
 
     /**
      * Filtrer les éléments où la valeur de la clé donnée est nulle.
@@ -436,26 +476,30 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Filtrez les éléments, en supprimant tous les éléments qui ne correspondent pas au(x) type(s) donné(s).
      *
-     * @param array<class-string>|class-string $type
+     * @template TWhereInstanceOf
      *
-     * @return static
+     * @param class-string<TWhereInstanceOf>|array<array-key, class-string<TWhereInstanceOf>> $type
+	 *
+     * @return static<TKey, TWhereInstanceOf>
      */
     public function whereInstanceOf($type);
 
     /**
      * Obtenir le premier élément de l'énumérable réussissant le test de vérité donné.
      *
-     * @param (callable(mixed,mixed): bool)|null $callback
-     * @param (\Closure(): mixed)|mixed          $default
+     * @template TFirstDefault
      *
-     * @return mixed
+     * @param (callable(TValue, TKey): bool)|null  $callback
+     * @param TFirstDefault|(\Closure(): TFirstDefault)  $default
+	 *
+     * @return TValue|TFirstDefault
      */
     public function first(?callable $callback = null, $default = null);
 
     /**
      * Obtenez le premier élément par la paire clé-valeur donnée.
      *
-     * @return mixed|null
+     * @return TValue|null
      */
     public function firstWhere(string $key, mixed $operator = null, mixed $value = null);
 
@@ -469,37 +513,48 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Flip the values with their keys.
      *
-     * @return static<mixed, TKey>
+     * @return static<TValue, TKey>
      */
     public function flip();
 
     /**
      * Obtenez un article de la collection par clé.
+     *
+     * @template TGetDefault
+     *
+     * @param TKey $key
+     * @param TGetDefault|(\Closure(): TGetDefault) $default
+	 *
+     * @return TValue|TGetDefault
      */
-    public function get(null|int|string $key, mixed $default = null): mixed;
+    public function get(int|string $key, mixed $default = null): mixed;
 
     /**
      * Regroupez un tableau associatif par un champ ou à l'aide d'un callback.
      *
-     * @param (callable(mixed, int|string $key): int|string)|array|string $groupBy
-     * @param mixed                                                       $groupBy
+     * @template TGroupKey of array-key
      *
-     * @return static
+     * @param (callable(TValue, TKey): TGroupKey)|array|string  $groupBy
+	 *
+     * @return static<($groupBy is string ? array-key : ($groupBy is array ? array-key : TGroupKey)), static<($preserveKeys is true ? TKey : int), ($groupBy is array ? mixed : TValue)>>
      */
     public function groupBy($groupBy, bool $preserveKeys = false);
 
     /**
      * Saisissez un tableau associatif par un champ ou à l'aide d'un callback.
      *
-     * @param (callable(mixed, int|string $key): int|string)|array|string $keyBy
-     * @param mixed                                                       $keyBy
+     * @template TNewKey of array-key
      *
-     * @return static
+     * @param (callable(TValue, TKey): TNewKey)|array|string  $keyBy
+	 *
+     * @return static<($keyBy is string ? array-key : ($keyBy is array ? array-key : TNewKey)), TValue>
      */
     public function keyBy($keyBy);
 
     /**
      * Détermine si un élément existe dans la collection par clé.
+	 *
+	 * @param TKey|array<array-key, TKey> $key
      */
     public function has(mixed $key): bool;
 
@@ -510,22 +565,53 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Concaténer les valeurs d'une clé donnée sous forme de chaîne.
+     *
+     * @param (callable(TValue, TKey): mixed)|string|null  $value
      */
     public function implode(callable|string $value, ?string $glue = null): string;
 
     /**
      * Intersection de la collection avec les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      *
      * @return static
      */
     public function intersect($items);
 
     /**
+     * Intersect the collection with the given items, using the callback.
+     *
+     * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
+     * @param callable(TValue, TValue): int $callback
+	 *
+     * @return static
+     */
+    public function intersectUsing($items, callable $callback);
+
+    /**
+     * Intersect the collection with the given items with additional index check.
+     *
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
+	 *
+     * @return static
+     */
+    public function intersectAssoc($items);
+
+	/**
+     * Intersect the collection with the given items with additional index check, using the callback.
+     *
+     * @param Arrayable<array-key, TValue>|iterable<array-key, TValue> $items
+     * @param callable(TValue, TValue): int $callback
+     *
+	 * @return static
+     */
+    public function intersectAssocUsing($items, callable $callback);
+
+	/**
      * Intersecter la collection avec les éléments donnés par clé.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, mixed>|iterable<TKey, mixed> $items
      *
      * @return static
      */
@@ -554,31 +640,35 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenez les clés des objets de la collection.
      *
-     * @return static<int, mixed>
+     * @return static<int, TKey>
      */
     public function keys();
 
     /**
      * Obtenez le dernier élément de la collection.
      *
-     * @param (callable(mixed, mixed $key): bool)|null $callback
-     * @param (Closure(): mixed)|mixed                 $default
+     * @template TLastDefault
+     *
+     * @param (callable(TValue, TKey): bool)|null  $callback
+     * @param TLastDefault|(\Closure(): TLastDefault)  $default
+	 *
+     * @return TValue|TLastDefault
      */
     public function last(?callable $callback = null, $default = null): mixed;
 
     /**
      * Exécutez une map sur chacun des éléments.
      *
-     * @param callable(mixed $value, mixed $key): mixed $callback
+     * @template TMapValue
      *
-     * @return static
+     * @param callable(TValue, TKey): TMapValue  $callback
+	 *
+     * @return static<TKey, TMapValue>
      */
     public function map(callable $callback);
 
     /**
      * Exécutez une map sur chaque bloc d'éléments imbriqué.
-     *
-     * @param callable(mixed): mixed $callback
      *
      * @return static
      */
@@ -587,11 +677,14 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Exécutez une map de dictionnaire sur les éléments.
      *
-     * Le rappel doit renvoyer un tableau associatif avec une seule paire clé/valeur.
+     * Le callback doit renvoyer un tableau associatif avec une seule paire clé/valeur.
      *
-     * @param callable(mixed $value, mixed $key): array $callback
+     * @template TMapToDictionaryKey of array-key
+     * @template TMapToDictionaryValue
      *
-     * @return static
+     * @param callable(TValue, TKey): array<TMapToDictionaryKey, TMapToDictionaryValue> $callback
+	 *
+     * @return static<TMapToDictionaryKey, array<int, TMapToDictionaryValue>>
      */
     public function mapToDictionary(callable $callback);
 
@@ -600,9 +693,12 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      *
      * Le callback doit renvoyer un tableau associatif avec une seule paire clé/valeur.
      *
-     * @param callable(mixed, mixed): array $callback
+     * @template TMapToGroupsKey of array-key
+     * @template TMapToGroupsValue
      *
-     * @return static
+     * @param callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue> $callback
+	 *
+     * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
      */
     public function mapToGroups(callable $callback);
 
@@ -614,7 +710,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @template TMapWithKeysKey of array-key
      * @template TMapWithKeysValue
      *
-     * @param callable(mixed, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
+     * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
      *
      * @return static<TMapWithKeysKey, TMapWithKeysValue>
      */
@@ -623,23 +719,30 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Mappez une collection et aplatissez le résultat d'un seul niveau.
      *
-     * @param  callable(mixed $key, mixed $value): Collection|array)  $callback
+     * @template TFlatMapKey of array-key
+     * @template TFlatMapValue
      *
-     * @return static
+     * @param callable(TValue, TKey): (Collection<TFlatMapKey, TFlatMapValue>|array<TFlatMapKey, TFlatMapValue>) $callback
+	 *
+     * @return static<TFlatMapKey, TFlatMapValue>
      */
     public function flatMap(callable $callback);
 
     /**
      * Mappez les valeurs dans une nouvelle classe.
      *
-     * @return static
+     * @template TMapIntoValue
+     *
+     * @param class-string<TMapIntoValue> $class
+	 *
+     * @return static<TKey, TMapIntoValue>
      */
     public function mapInto(string $class);
 
     /**
      * Fusionner la collection avec les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      *
      * @return static
      */
@@ -648,25 +751,29 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Fusionne récursivement la collection avec les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @template TMergeRecursiveValue
      *
-     * @return static
+     * @param Arrayable<TKey, TMergeRecursiveValue>|iterable<TKey, TMergeRecursiveValue>  $items
+	 *
+     * @return static<TKey, TValue|TMergeRecursiveValue>
      */
     public function mergeRecursive($items);
 
     /**
      * Créez une collection en utilisant cette collection pour les clés et une autre pour ses valeurs.
      *
-     * @param Arrayable|iterable $values
+     * @template TCombineValue
      *
-     * @return static
+     * @param Arrayable<array-key, TCombineValue>|iterable<array-key, TCombineValue>  $values
+	 *
+     * @return static<TValue, TCombineValue>
      */
     public function combine($values);
 
     /**
      * Union de la collection avec les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      *
      * @return static
      */
@@ -675,8 +782,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir la valeur minimale d'une clé donnée.
      *
-     * @param (callable(mixed $value):mixed)|string|null $callback
-     * @param mixed|null                                 $callback
+     * @param (callable(TValue):mixed)|string|null $callback
      *
      * @return mixed
      */
@@ -685,8 +791,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir la valeur maximale d'une clé donnée.
      *
-     * @param (callable(mixed $value):mixed)|string|null $callback
-     * @param mixed|null                                 $callback
+     * @param (callable(TValue):mixed)|string|null $callback
      *
      * @return mixed
      */
@@ -702,7 +807,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenez les éléments avec les clés spécifiées.
      *
-     * @param array|Enumerable|string $keys
+     * @param Enumerable<array-key, TKey>|array<array-key, TKey>|string|null $keys
      *
      * @return static
      */
@@ -718,30 +823,32 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Partitionnez la collection en deux tableaux à l'aide du callback ou de la clé donnés.
      *
-     * @param (callable(mixed $value, mixed $key): bool)|mixed|string $key
-     * @param mixed                                                   $key
+     * @param (callable(TValue, TKey): bool)|TValue|string $key
      *
-     * @return static<int<0, 1>, static>
+     * @return static<int<0, 1>, static<TKey, TValue>>
      */
-    public function partition($key, ?string $operator = null, mixed $value = null);
+    public function partition($key, mixed $operator = null, mixed $value = null);
 
     /**
      * Poussez tous les éléments donnés sur la collection.
      *
-     * @return static
+     * @template TConcatKey of array-key
+     * @template TConcatValue
+     *
+     * @param iterable<TConcatKey, TConcatValue> $source
+	 *
+     * @return static<TKey|TConcatKey, TValue|TConcatValue>
      */
     public function concat(iterable $source);
 
     /**
      * Obtenez un ou un nombre spécifié d'éléments au hasard dans la collection.
      *
-     * @param (callable(self): int)|int|null $number
-     *
-     * @return mixed|static
-     *
-     * @throws InvalidArgumentException
+     * @param (callable(self<TKey, TValue>): int)|int|null $number
+	 *
+     * @return static<int, TValue>|TValue
      */
-    public function random($number = null);
+    public function random($number = null, bool $preserveKeys = false);
 
     /**
      * Reduce the collection to a single value.
@@ -749,10 +856,10 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * @template TReduceInitial
      * @template TReduceReturnType
      *
-     * @param callable(TReduceInitial|TReduceReturnType, mixed, TKey): TReduceReturnType $callback
-     * @param TReduceInitial                                                             $initial
-     *
-     * @return TReduceReturnType
+     * @param callable(TReduceInitial|TReduceReturnType, TValue, TKey): TReduceReturnType $callback
+     * @param TReduceInitial  $initial
+	 *
+     * @return TReduceInitial|TReduceReturnType
      */
     public function reduce(callable $callback, $initial = null);
 
@@ -766,7 +873,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Remplacez les éléments de la collection par les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      *
      * @return static
      */
@@ -775,7 +882,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Remplacez récursivement les éléments de la collection par les éléments donnés.
      *
-     * @param Arrayable|iterable $items
+     * @param Arrayable<TKey, TValue>|iterable<TKey, TValue> $items
      *
      * @return static
      */
@@ -791,17 +898,34 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Recherche dans la collection une valeur donnée et renvoie la clé correspondante en cas de succès.
      *
-     * @param callable(mixed $item, int|string $key): bool|mixed $value
-     * @param mixed                                              $value
-     *
-     * @return bool|int|string
+     * @param TValue|(callable(TValue,TKey): bool)  $value
+	 *
+     * @return TKey|false
      */
     public function search($value, bool $strict = false);
 
     /**
+     * Get the item before the given item.
+     *
+     * @param TValue|(callable(TValue,TKey): bool) $value
+     *
+	 * @return TValue|null
+     */
+    public function before($value, bool $strict = false);
+
+    /**
+     * Get the item after the given item.
+     *
+     * @param TValue|(callable(TValue,TKey): bool) $value
+     *
+	 * @return TValue|null
+     */
+    public function after($value, bool $strict = false);
+
+    /**
      * Mélangez les objets de la collection.
      *
-     * @return static
+     * @return static<TKey, TValue>
      */
     public function shuffle(?int $seed = null);
 
@@ -821,9 +945,8 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Ignorer les éléments de la collection jusqu'à ce que la condition donnée soit remplie.
-     *
-     * @param callable(mixed,int|string $key): bool|mixed $value
-     * @param mixed                                       $value
+	 *
+     * @param TValue|callable(TValue,TKey): bool $value
      *
      * @return static
      */
@@ -832,8 +955,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Ignorer les éléments de la collection tant que la condition donnée est remplie.
      *
-     * @param callable(mixed, int|string $key): bool|mixed $value
-     * @param mixed                                        $value
+     * @param TValue|callable(TValue,TKey): bool $value
      *
      * @return static
      */
@@ -856,33 +978,34 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Récupère le premier élément de la collection, mais uniquement s'il existe exactement un élément. Sinon, lancez une exception.
      *
-     * @param (callable(mixed, int|string $key): bool)|string $key
-     *
-     * @throws ItemNotFoundException
-     * @throws MultipleItemsFoundException
+     * @param (callable(TValue, TKey): bool)|string $key
+	 *
+     * @return TValue
      */
-    public function sole($key = null, ?string $operator = null, mixed $value = null): mixed;
+    public function sole($key = null, mixed $operator = null, mixed $value = null): mixed;
 
     /**
      * Récupère le premier élément de la collection mais lève une exception si aucun élément correspondant n'existe.
      *
-     * @param (callable(mixed, int|string $key): bool)|string $key
-     *
-     * @throws ItemNotFoundException
+     * @param (callable(TValue, TKey): bool)|string $key
+	 *
+     * @return TValue
      */
-    public function firstOrFail($key = null, ?string $operator = null, mixed $value = null): mixed;
+    public function firstOrFail($key = null, mixed $operator = null, mixed $value = null): mixed;
 
     /**
      * Coupez la collection en morceaux de la taille donnée.
+	 *
+     * @return ($preserveKeys is true ? static<int, static> : static<int, static<int, TValue>>)
      */
-    public function chunk(int $size);
+    public function chunk(int $size, bool $preserveKeys = true);
 
     /**
      * Coupez la collection en morceaux avec un callback.
      *
-     * @param callable(mixed, int|string $key, static<int, mixed>): bool $callback
-     *
-     * @return static<int, static<int, mixed>>
+     * @param  callable(TValue, TKey, static<int, TValue>): bool  $callback
+	 *
+     * @return static<int, static<int, TValue>>
      */
     public function chunkWhile(callable $callback);
 
@@ -896,7 +1019,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Triez chaque élément avec un callback.
      *
-     * @param (callable(mixed, mixed): int)|int|null $callback
+     * @param (callable(TValue, TValue): int)|null|int $callback
      *
      * @return static
      */
@@ -912,7 +1035,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Trier la collection à l'aide du rappel donné.
      *
-     * @param (callable(mixed, int|string): mixed)|array<int|string, (callable(mixed, int|string): mixed)|(callable(mixed, mixed): mixed)|array{string, string}|string>|string $callback
+     * @param  array<array-key, (callable(TValue, TValue): mixed)|(callable(TValue, TKey): mixed)|string|array{string, string}>|(callable(TValue, TKey): mixed)|string  $callback
      *
      * @return static
      */
@@ -921,7 +1044,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Triez la collection dans l'ordre décroissant à l'aide du rappel donné.
      *
-     * @param (callable(mixed, int|string): mixed)|array<int|string, (callable(mixed, int|string): mixed)|(callable(mixed, mixed): mixed)|array{string, string}|string>|string $callback
+     * @param array<array-key, (callable(TValue, TValue): mixed)|(callable(TValue, TKey): mixed)|string|array{string, string}>|(callable(TValue, TKey): mixed)|string $callback
      *
      * @return static
      */
@@ -944,7 +1067,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Triez les clés de collection à l'aide d'un callback.
      *
-     * @param callable(mixed, mixed): int $callback
+     * @param callable(TKey, TKey): int $callback
      *
      * @return static
      */
@@ -953,8 +1076,7 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir la somme des valeurs données.
      *
-     * @param (callable(mixed $value): mixed)|string|null $callback
-     * @param mixed|null                                  $callback
+     * @param (callable(TValue): mixed)|string|null $callback
      *
      * @return mixed
      */
@@ -962,31 +1084,33 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
 
     /**
      * Prenez le premier ou le dernier {$limit} éléments.
+	 *
+     * @return static<TKey, TValue>
      */
     public function take(int $limit);
 
     /**
      * Prenez des objets dans la collection jusqu'à ce que la condition donnée soit remplie.
      *
-     * @param callable(mixed, int|string): bool|mixed $value
+     * @param TValue|callable(TValue,TKey): bool $value
      *
-     * @return static
+     * @return static<TKey, TValue>
      */
     public function takeUntil($value);
 
     /**
      * Prendre des objets dans la collection tant que la condition donnée est remplie.
      *
-     * @param callable(mixed, int|string): bool|mixed $value
+     * @param TValue|callable(TValue,TKey): bool $value
      *
-     * @return static
+     * @return static<TKey, TValue>
      */
     public function takeWhile($value);
 
     /**
      * Passez la collection au rappel donné, puis renvoyez-la.
      *
-     * @param callable($this): mixed $callback
+     * @param callable(TValue): mixed $callback
      *
      * @return $this
      */
@@ -995,18 +1119,22 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Passez la collection au callback donné et renvoyez le résultat.
      *
-     * @param callable($this): mixed $callback
+     * @template TPipeReturnType
      *
-     * @return mixed
+     * @param callable($this): TPipeReturnType $callback
+	 *
+     * @return TPipeReturnType
      */
     public function pipe(callable $callback);
 
     /**
      * Passez la collection dans une nouvelle classe.
      *
-     * @param class-string $class
+     * @template TPipeIntoValue
      *
-     * @return mixed
+     * @param class-string<TPipeIntoValue> $class
+	 *
+     * @return TPipeIntoValue
      */
     public function pipeInto(string $class);
 
@@ -1020,21 +1148,28 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Obtenir les valeurs d'une clé donnée.
      *
-     * @param string|string[] $value
-     *
-     * @return static<int, mixed>
+     * @param Closure|string|int|array<array-key, string>|null  $value
+     * @param Closure|string|null $key
+	 *
+     * @return static<array-key, mixed>
      */
-    public function pluck($value, ?string $key = null);
+    public function pluck($value, $key = null);
 
     /**
      * Créez une collection de tous les éléments qui ne réussissent pas un test de vérité donné.
      *
-     * @param (callable(mixed $value, mixed $key): bool)|bool|mixed $callback
-     * @param mixed                                                 $callback
+     * @param (callable(TValue, TKey): bool)|bool|TValue $callback
      *
      * @return static
      */
     public function reject($callback = true);
+
+    /**
+     * Aplatir un tableau associatif multidimensionnel avec des points.
+     *
+     * @return static
+     */
+    public function dot();
 
     /**
      * Convertit un tableau de notation "point" aplati en un tableau étendu.
@@ -1046,39 +1181,43 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Renvoie uniquement les éléments uniques du tableau de collection.
      *
-     * @param (callable(mixed $item, int|string $key): mixed)|string|null $key
-     * @param mixed|null                                                  $key
+     * @param (callable(TValue, TKey): mixed)|string|null $key
      *
-     * @return static
+     * @return static<TKey, TValue>
      */
     public function unique($key = null, bool $strict = false);
 
     /**
      * Renvoie uniquement les éléments uniques du tableau de collection en utilisant une comparaison stricte.
      *
-     * @param (callable(mixed $value, mixed $key): mixed)|string|null $key
-     * @param mixed|null                                              $key
+     * @param (callable(TValue, TKey): mixed)|string|null $key
      *
-     * @return static
+     * @return static<TKey, TValue>
      */
     public function uniqueStrict($key = null);
 
     /**
      * Réinitialisez les clés sur le tableau sous-jacent.
      *
-     * @return static<int, mixed>
+     * @return static<int, TValue>
      */
     public function values();
 
     /**
      * Remplir la collection à la longueur spécifiée avec une valeur.
      *
-     * @return static<int, mixed>
+     * @template TPadValue
+     *
+     * @param TPadValue $value
+	 *
+     * @return static<int, TValue|TPadValue>
      */
     public function pad(int $size, mixed $value);
 
     /**
      * Obtenez l'itérateur de valeurs.
+     *
+     * @return Traversable<TKey, TValue>
      */
     public function getIterator(): Traversable;
 
@@ -1090,9 +1229,9 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
     /**
      * Comptez le nombre d'éléments de la collection par un champ ou à l'aide d'un callback.
      *
-     * @param (callable(mixed, int|string): int|string)|string|null $countBy
-     *
-     * @return static<int|string, int>
+     * @param (callable(TValue, TKey): array-key)|string|null  $countBy
+	 *
+     * @return static<array-key, int>
      */
     public function countBy($countBy = null);
 
@@ -1102,14 +1241,18 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * ex. new Collection([1, 2, 3])->zip([4, 5, 6]);
      *      => [[1, 4], [2, 5], [3, 6]]
      *
-     * @param Arrayable|iterable ...$items
+     * @template TZipValue
      *
-     * @return static<int, static<int, mixed>>
+     * @param Arrayable<array-key, TZipValue>|iterable<array-key, TZipValue>  ...$items
+	 *
+     * @return static<int, static<int, TValue|TZipValue>>
      */
     public function zip($items);
 
     /**
      * Rassemblez les valeurs dans une collection.
+     *
+     * @return Collection<TKey, TValue>
      */
     public function collect();
 
@@ -1117,6 +1260,11 @@ interface Enumerable extends Arrayable, Countable, IteratorAggregate, Jsonable, 
      * Convertissez l'objet en quelque chose de JSON sérialisable.
      */
     public function jsonSerialize(): mixed;
+
+    /**
+     * Get the collection of items as pretty print formatted JSON.
+     */
+    public function toPrettyJson(int $options = 0): string;
 
     /**
      * Obtenez une instance de CachingIterator.
