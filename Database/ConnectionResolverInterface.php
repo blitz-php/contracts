@@ -31,7 +31,7 @@ interface ConnectionResolverInterface
      *
      * @return array [group, configuration]
      */
-    public function connectionInfo(null|array|string $group = null): array;
+    public function connectionInfo(array|string|null $group = null): array;
 
     /**
      * Get the default connection name.

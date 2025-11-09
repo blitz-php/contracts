@@ -19,7 +19,7 @@ namespace BlitzPHP\Contracts\Event;
  */
 interface EventInterface
 {
-	public const PRIORITY_LOW    = 200;
+    public const PRIORITY_LOW    = 200;
     public const PRIORITY_NORMAL = 100;
     public const PRIORITY_HIGH   = 10;
 

@@ -23,7 +23,8 @@ interface StatusCode
     /**
      * Codes non officiels
      */
-    public const CHECKPOINT                           = 103;
+    public const CHECKPOINT = 103;
+
     public const THIS_IS_FIND                         = 218;  // Apache Web Server
     public const PAGE_EXPIRED                         = 419;  // Laravel Framework
     public const METHOD_FAILURE                       = 420;  // Spring Framework
@@ -131,12 +132,12 @@ interface StatusCode
     public const NOT_EXTENDED                    = 510;  // RFC 2774
     public const NETWORK_AUTHENTICATION_REQUIRED = 511;  // RFC 6585
 
-	/**
+    /**
      * Codes d'état HTTP autorisés et leur description par défaut.
      *
      * @var array<int, string>
      */
-	public const VALID_CODES = [
+    public const VALID_CODES = [
         // 1xx: Informational
         self::CONTINUE            => 'Continue',
         self::SWITCHING_PROTOCOLS => 'Switching Protocols',
@@ -206,13 +207,13 @@ interface StatusCode
         self::NOT_EXTENDED                    => 'Not Extended',                      // http://www.ietf.org/rfc/rfc2774.txt
         self::NETWORK_AUTHENTICATION_REQUIRED => 'Network Authentication Required',   // http://www.ietf.org/rfc/rfc6585.txt
         // Not officially supported
-		self::PAGE_EXPIRED                  => 'Page Expired',
-		self::INVALID_TOKEN                 => 'Invalid Token',
-		self::CLIENT_CLOSED_REQUEST         => 'Client Closed Request',                // http://lxr.nginx.org/source/src/http/ngx_http_request.h#0133
-		self::NO_RESPONSE                   => 'Connection Closed Without Respon0se',
-		self::SITE_IS_OVERLOADED            => 'Site Is Overloaded',
-		self::SITE_IS_FROZEN                => 'Site Is Frozen',
-		self::TEMPORARILY_DISABLED          => 'Temporarily Disabled',
-		self::NETWORK_CONNECT_TIMEOUT_ERROR => 'Network Connect Timeout Error',        // https://httpstatuses.com/599
+        self::PAGE_EXPIRED                  => 'Page Expired',
+        self::INVALID_TOKEN                 => 'Invalid Token',
+        self::CLIENT_CLOSED_REQUEST         => 'Client Closed Request',                // http://lxr.nginx.org/source/src/http/ngx_http_request.h#0133
+        self::NO_RESPONSE                   => 'Connection Closed Without Respon0se',
+        self::SITE_IS_OVERLOADED            => 'Site Is Overloaded',
+        self::SITE_IS_FROZEN                => 'Site Is Frozen',
+        self::TEMPORARILY_DISABLED          => 'Temporarily Disabled',
+        self::NETWORK_CONNECT_TIMEOUT_ERROR => 'Network Connect Timeout Error',        // https://httpstatuses.com/599
     ];
 }

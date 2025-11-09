@@ -60,7 +60,7 @@ interface LocatorInterface
      * Scane les namespace definis, retourne une liste de tous les fichiers
      * contenant la sous partie specifiee par $path.
      *
-     * @return string[] Liste des fichiers du chemins
+     * @return list<string> Liste des fichiers du chemins
      */
     public function listFiles(string $path): array;
 
@@ -68,7 +68,7 @@ interface LocatorInterface
      * Analyse l'espace de noms fourni, renvoyant une liste de tous les fichiers
      * contenus dans le sous-chemin spécifié par $path.
      *
-     * @return string[] Liste des chemins des fichiers
+     * @return list<string> Liste des chemins des fichiers
      */
     public function listNamespaceFiles(string $prefix, string $path): array;
 }

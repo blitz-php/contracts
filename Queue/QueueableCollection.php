@@ -26,14 +26,14 @@ interface QueueableCollection
     /**
      * Get the identifiers for all of the entities.
      *
-     * @return mixed[]
+     * @return list<mixed>
      */
     public function getQueueableIds(): array;
 
     /**
      * Get the relationships of the entities being queued.
      *
-     * @return string[]
+     * @return list<string>
      */
     public function getQueueableRelations(): array;
 

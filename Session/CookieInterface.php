@@ -48,7 +48,7 @@ interface CookieInterface
     /**
      * Valeurs valides pour l'attribut "SameSite".
      *
-     * @var string[]
+     * @var list<string>
      */
     public const SAMESITE_VALUES = [
         self::SAMESITE_LAX,

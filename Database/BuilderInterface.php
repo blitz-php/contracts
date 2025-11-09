@@ -42,14 +42,14 @@ interface BuilderInterface
     /**
      * Génère la partie FROM de la requête
      *
-     * @param string|string[]|null $from
+     * @param list<string>|string|null $from
      */
     public function from($from, bool $overwrite = false): self;
 
     /**
      *Génère la partie FROM de la requête
      *
-     * @param string|string[]|null $from
+     * @param list<string>|string|null $from
      *
      * @alias self::from()
      */
@@ -84,14 +84,14 @@ interface BuilderInterface
     /**
      * Ajouter des champs pour les tri
      *
-     * @param string|string[] $field Un nom de champ ou un tableau de champs
+     * @param list<string>|string $field Un nom de champ ou un tableau de champs
      */
     public function orderBy(array|string $field, string $direction = 'ASC', bool $escape = true): self;
 
     /**
      * Ajoute des champs à regrouper.
      *
-     * @param string|string[] $field Nom de champ ou tableau de noms de champs
+     * @param list<string>|string $field Nom de champ ou tableau de noms de champs
      */
     public function groupBy($field, bool $escape = true): self;
 
@@ -122,7 +122,7 @@ interface BuilderInterface
     /**
      * Construit une requête de sélection.
      *
-     * @param string|string[] $fields Nom de champ ou tableau de noms de champs à sélectionner
+     * @param list<string>|string $fields Nom de champ ou tableau de noms de champs à sélectionner
      */
     public function select($fields = '*', ?int $limit = null, ?int $offset = null): self;
 
@@ -292,22 +292,22 @@ interface BuilderInterface
     /**
      * Recupere la valeur d'un ou de plusieurs champs.
      *
-     * @param string|string[] $name   Le nom du/des champs de la base de donnees
-     * @param string|null     $key    Cle du cache
-     * @param int             $expire Délai d'expiration en secondes
+     * @param list<string>|string $name   Le nom du/des champs de la base de donnees
+     * @param string|null         $key    Cle du cache
+     * @param int                 $expire Délai d'expiration en secondes
      *
-     * @return mixed|mixed[] La valeur du/des champs
+     * @return list<mixed>|mixed La valeur du/des champs
      */
     public function value(array|string $name, ?string $key = null, int $expire = 0);
 
     /**
      * Recupere les valeurs d'un ou de plusieurs champs.
      *
-     * @param string|string[] $name   Le nom du/des champs de la base de donnees
-     * @param string|null     $key    Cle du cache
-     * @param int             $expire Délai d'expiration en secondes
+     * @param list<string>|string $name   Le nom du/des champs de la base de donnees
+     * @param string|null         $key    Cle du cache
+     * @param int                 $expire Délai d'expiration en secondes
      *
-     * @return mixed[] La/les valeurs du/des champs
+     * @return list<mixed> La/les valeurs du/des champs
      */
     public function values(array|string $name, ?string $key = null, int $expire = 0): array;
 

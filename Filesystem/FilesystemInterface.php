@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This file is part of Blitz PHP framework - Filesystem.
+ * This file is part of Blitz PHP framework.
  *
- * (c) 2023 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
+ * (c) 2022 Dimitri Sitchet Tomkeu <devcode.dst@gmail.com>
  *
  * For the full copyright and license information, please view
  * the LICENSE file that was distributed with this source code.
@@ -88,7 +88,7 @@ interface FilesystemInterface
     /**
      * Supprime le fichier situé à un emplacement donné.
      */
-    public function delete(string|array $paths): bool;
+    public function delete(array|string $paths): bool;
 
     /**
      * Copier un fichier vers un nouvel emplacement.

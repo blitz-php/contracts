@@ -24,8 +24,8 @@ interface ContainerInterface extends PsrContainerInterface
      * Résoudre le type donné à partir du conteneur.
      *
      * @template T
-     * @param string|class-string<T> $absstract
-     * @param array $parameters
+     *
+     * @param class-string<T>|string $absstract
      */
     public function make(string $abstract, array $parameters = []): mixed;
 

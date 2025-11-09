@@ -30,7 +30,7 @@ interface EventManagerInterface
      */
     public function on(string $event, callable $callback, int $priority = 0): bool;
 
-	/**
+    /**
      * @deprecated use on() instead
      */
     public function attach(string $event, callable $callback, int $priority = 0): bool;
@@ -45,7 +45,7 @@ interface EventManagerInterface
      */
     public function off(string $event, callable $callback): bool;
 
-	/**
+    /**
      * @deprecated use off() instead
      */
     public function detach(string $event, callable $callback): bool;
@@ -53,7 +53,7 @@ interface EventManagerInterface
     /**
      * Effacer tous les écouteurs pour un événement donné
      */
-    public function clearListeners(string $event = null): void;
+    public function clearListeners(?string $event = null): void;
 
     /**
      * Déclencher un événement
@@ -70,6 +70,10 @@ interface EventManagerInterface
 
     /**
      * @deprecated use emit() instead
+     *
+     * @param mixed      $event
+     * @param mixed|null $target
+     * @param mixed      $argv
      */
     public function trigger($event, $target = null, $argv = []);
 }
