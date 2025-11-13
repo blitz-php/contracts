@@ -72,10 +72,8 @@ interface CookieInterface
 
     /**
      * Modifie le nom du cookie
-     *
-     * @return static
      */
-    public function withName(string $name);
+    public function withName(string $name): static;
 
     /**
      * Recupère le nom du cookie
@@ -84,28 +82,22 @@ interface CookieInterface
 
     /**
      * Recupère la valeur du cookie
-     *
-     * @return array|string
      */
-    public function getValue();
+    public function getValue(): array|string;
 
     /**
      * Obtient la valeur du cookie sous forme scalaire.
      *
      * Cela va réduire toutes les données complexes dans le cookie avec json_encode()
-     *
-     * @return mixed
      */
-    public function getScalarValue();
+    public function getScalarValue(): string;
 
     /**
      * Crée un cookie avec une valeur mise à jour
      *
-     * @param mixed $value
-     *
-     * @return static
+     * @param array|string|float|int|bool $value Valeur du cookie à définir
      */
-    public function withValue($value);
+    public function withValue(mixed $value): static;
 
     /**
      * Obtenir l'identifiant d'un cookie
@@ -121,10 +113,8 @@ interface CookieInterface
 
     /**
      * Créer un nouveau cookie avec un chemin mis à jour
-     *
-     * @return static
      */
-    public function withPath(string $path);
+    public function withPath(string $path): static;
 
     /**
      * Recupère le domaine
@@ -133,17 +123,15 @@ interface CookieInterface
 
     /**
      * Crée un nouveau cookie avec un domaine mis à jour
-     *
-     * @return static
      */
-    public function withDomain(string $domain);
+    public function withDomain(string $domain): static;
 
     /**
      * Obtenir l'heure d'expiration actuelle
      *
-     * @return DateTime|DateTimeImmutable|null Timestamp of expiry or null
+     * @return DateTimeInterface|null Timestamp of expiry or null
      */
-    public function getExpiry();
+    public function getExpiry(): ?DateTimeInterface;
 
     /**
      * Obtenir l'horodatage à partir de l'heure d'expiration
@@ -159,37 +147,29 @@ interface CookieInterface
 
     /**
      * Créer un cookie avec une date d'expiration mise à jour
-     *
-     * @param DateTime|DateTimeImmutable $dateTime
-     *
-     * @return static
      */
-    public function withExpiry($dateTime);
+    public function withExpiry(DateTimeInterface $dateTime): static;
 
     /**
      * Créez un nouveau cookie qui n'expirera pratiquement jamais.
-     *
-     * @return static
      */
-    public function withNeverExpire();
+    public function withNeverExpire(): static;
 
     /**
      * Créez un nouveau cookie qui expirera/supprimera le cookie du navigateur.
      *
      * Cela se fait en définissant le délai d'expiration sur 1 an auparavant
-     *
-     * @return static
      */
-    public function withExpired();
+    public function withExpired(): static;
 
     /**
      * Vérifiez si un cookie a expiré par rapport à $time
      *
      * Les cookies sans date d'expiration renvoient toujours faux.
      *
-     * @param DateTime|DateTimeImmutable $time L'heure de test. Par défaut, 'maintenant' en UTC.
+     * @param ?DateTimeInterface $time L'heure de test. Par défaut, 'maintenant' en UTC.
      */
-    public function isExpired($time = null): bool;
+    public function isExpired(?DateTimeInterface $time = null): bool;
 
     /**
      * Vérifie si le cookie est HTTP only
@@ -198,10 +178,8 @@ interface CookieInterface
 
     /**
      * Créer un cookie avec HTTP Only mis à jour
-     *
-     * @return static
      */
-    public function withHttpOnly(bool $httpOnly);
+    public function withHttpOnly(bool $httpOnly): static;
 
     /**
      * Vérifie si le cookie est sécurisé
@@ -210,10 +188,8 @@ interface CookieInterface
 
     /**
      * Créer un cookie avec Secure mis à jour
-     *
-     * @return static
      */
-    public function withSecure(bool $secure);
+    public function withSecure(bool $secure): static;
 
     /**
      * Obtenez l'attribut SameSite.
@@ -225,10 +201,8 @@ interface CookieInterface
      *
      * @param string|null $sameSite Valeur à définir pour l'option Samesite.
      *                              Une des constantes CookieInterface::SAMESITE_*.
-     *
-     * @return static
      */
-    public function withSameSite(?string $sameSite);
+    public function withSameSite(?string $sameSite): static;
 
     /**
      * Obtenez les options de cookie

@@ -39,8 +39,8 @@ interface SessionInterface
      * Si $data est un tableau, on s'attend à ce qu'il s'agisse
      * d'un tableau de paires clé/valeur à définir comme propriétés de session.
      *
-     * @param array|string                            $data  Nom de propriété ou tableau associatif de propriétés
-     * @param array|bool|float|int|object|string|null $value Valeur de la propriété si une seule clé est fournie
+     * @param array<string, mixed>|list<string>|string $data  Nom de propriété ou tableau associatif de propriétés
+     * @param array|bool|float|int|object|string|null  $value Valeur de la propriété si une seule clé est fournie
      */
     public function set(array|string $data, mixed $value = null): void;
 
@@ -50,9 +50,9 @@ interface SessionInterface
      * Si la propriété existe en tant que "normale", la renvoie.
      * Sinon, renvoie un tableau de toutes les valeurs de données temporaires ou flash avec la clé de propriété.
      *
-     * @param string $key Identifiant de la propriété de session à récupérer
+     * @param ?string $key Identifiant de la propriété de session à récupérer
      *
-     * @return array|bool|float|int|object|string|null La ou les valeurs de la propriété
+     * @return ($key is string ? mixed : array<string, mixed>) La ou les valeurs de la propriété
      */
     public function get(?string $key = null): mixed;
 
@@ -70,7 +70,7 @@ interface SessionInterface
      * propriété de chaîne à supprimer. Sinon, il est interprété comme l'identifiant
      * d'une propriété de session spécifique à supprimer.
      *
-     * @param array|string $key Identifiant de la ou des propriétés de session à supprimer.
+     * @param list<string>|string $key Identifiant de la ou des propriétés de session à supprimer.
      */
     public function remove(array|string $key): void;
 
@@ -81,7 +81,7 @@ interface SessionInterface
      * Si $data est un tableau, il est interprété comme un tableau associatif de paires clé/valeur pour les propriétés flashdata.
      * Sinon, il est interprété comme l'identifiant d'une propriété flashdata spécifique, avec $value contenant la valeur de la propriété.
      *
-     * @param array|string                            $data  Identificateur de propriété ou tableau associatif de propriétés
+     * @param array<string, mixed>|string 			  $data  Identificateur de propriété ou tableau associatif de propriétés
      * @param array|bool|float|int|object|string|null $value Valeur de la propriété si $data est un scalaire
      */
     public function setFlashdata(array|string $data, array|bool|float|int|object|string|null $value = null): void;
@@ -91,23 +91,23 @@ interface SessionInterface
      *
      * Si la clé de l'élément est nulle, renvoie toutes les données flash.
      *
-     * @param string $key Identificateur de propriété
+     * @param ?string $key Identificateur de propriété
      *
-     * @return array|null La valeur de la propriété demandée, ou un tableau associatif de celles-ci
+     * @return ($key is string ? mixed : array<string, mixed>) La valeur de la propriété demandée, ou un tableau associatif de celles-ci
      */
-    public function getFlashdata(?string $key = null): ?array;
+    public function getFlashdata(?string $key = null): mixed;
 
     /**
      * Maintient un seul élément de données flash en vie pour une requête supplémentaire.
      *
-     * @param array|string $key Identificateur de propriété ou tableau d'entre eux
+     * @param list<string>|string $key Identificateur de propriété ou tableau d'entre eux
      */
     public function keepFlashdata(array|string $key): void;
 
     /**
      * Marquez une ou plusieurs propriétés de session comme données flash.
      *
-     * @param array|string $key Identificateur de propriété ou tableau d'entre eux
+     * @param list<string>|string $key Identificateur de propriété ou tableau d'entre eux
      *
      * @return false si l'une des propriétés n'est pas déjà définie
      */
@@ -116,14 +116,14 @@ interface SessionInterface
     /**
      * Décochez les données de la session en tant que données flash.
      *
-     * @param array|string $key Identificateur de propriété ou tableau d'entre eux
+     * @param list<string>|string $key Identificateur de propriété ou tableau d'entre eux
      */
-    public function unmarkFlashdata(array|string $key);
+    public function unmarkFlashdata(array|string $key): void;
 
     /**
      * Récupérez toutes les clés des données de session marquées comme données flash.
      *
-     * @return array Les noms de propriété de toutes les données flash
+     * @return list<string> Les noms de propriété de toutes les données flash
      */
     public function getFlashKeys(): array;
 
@@ -131,19 +131,19 @@ interface SessionInterface
      * Définit de nouvelles données dans la session et les marque comme données temporaires
      * avec une durée de vie définie.
      *
-     * @param array|string                            $data  Clé de données de session ou tableau associatif d'éléments
-     * @param array|bool|float|int|object|string|null $value Valeur à stocker
-     * @param int                                     $ttl   Durée de vie en secondes
+     * @param array<string, mixed>|list<string>|string  $data  Clé de données de session ou tableau associatif d'éléments
+     * @param array|bool|float|int|object|string|null 	$value Valeur à stocker
+     * @param int                                       $ttl   Durée de vie en secondes
      */
-    public function setTempdata(array|string $data, array|bool|float|int|object|string|null $value = null, int $ttl = 300): void;
+    public function setTempdata(array|string $data, mixed $value = null, int $ttl = 300): void;
 
     /**
      * Renvoie soit un seul élément de données temporaires, soit toutes les données temporaires actuellement
      * en session.
      *
-     * @param string $key Clé de données de session
+     * @param ?string $key Clé de données de session
      *
-     * @return array|bool|float|int|object|string|null Valeur des données de session ou null si introuvable.
+     * @return ($key is string ? mixed : array<string, mixed>) Valeur des données de session ou null si introuvable.
      */
     public function getTempdata(?string $key = null);
 
@@ -156,8 +156,8 @@ interface SessionInterface
      * Marquer une ou plusieurs données comme étant temporaires, ce qui signifie que
      * il a une durée de vie définie au sein de la session.
      *
-     * @param array|string $key Identificateur de propriété ou tableau d'entre eux
-     * @param int          $ttl Durée de vie, en secondes
+     * @param array<string, mixed>|list<string>|string 	$key Identificateur de propriété ou tableau d'entre eux
+     * @param int          								$ttl Durée de vie, en secondes
      *
      * @return bool False si l'une des propriétés n'a pas été définie
      */
@@ -167,12 +167,14 @@ interface SessionInterface
      * Décoche les données temporaires de la session, supprimant ainsi leur
      * durée de vie et lui permettant de vivre aussi longtemps que la session.
      *
-     * @param array|string $key Identificateur de propriété ou tableau d'entre eux
+     * @param list<string>|string $key Identificateur de propriété ou tableau d'entre eux
      */
     public function unmarkTempdata(array|string $key): void;
 
     /**
      * Récupérez les clés de toutes les données de session qui ont été marquées comme données temporaires.
+     *
+     * @return list<string>
      */
     public function getTempKeys(): array;
 }
