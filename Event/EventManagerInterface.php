@@ -12,7 +12,7 @@
 namespace BlitzPHP\Contracts\Event;
 
 /**
- * Interface pour EventManager
+ * Interface pour les gestionnaires d'événements.
  *
  * Ceci est une copie de l'ancienne interface des evenements PSR-14
  * L'EventManager a été remplacé par l'EventDispatcher mais BlitzPHP continue d'utiliser l'ancienne spécification va savoir pourquoi 😅
@@ -20,60 +20,50 @@ namespace BlitzPHP\Contracts\Event;
 interface EventManagerInterface
 {
     /**
-     * Attache un écouteur à un événement
+     * Ajoute un écouteur d'événement
      *
-     * @param string   $event    l'événement à attacher
-     * @param callable $callback une fonction appelable
-     * @param int      $priority la priorité à laquelle le $callback est exécuté
-     *
-     * @return bool vrai en cas de succès faux en cas d'échec
+     * @param string   $event    Nom de l'événement à écouter
+     * @param callable $callback Callback à exécuter
+     * @param int      $priority Priorité d'exécution (plus bas = exécuté en premier)
+	 *
+     * @return bool True si l'écouteur a été ajouté avec succès
      */
     public function on(string $event, callable $callback, int $priority = 0): bool;
 
     /**
-     * @deprecated use on() instead
-     */
-    public function attach(string $event, callable $callback, int $priority = 0): bool;
-
-    /**
-     * Détache un écouteur d'un événement
+     * Supprime un écouteur d'événement
      *
-     * @param string   $event    l'événement à détacher
-     * @param callable $callback une fonction appelable
-     *
-     * @return bool vrai en cas de succès faux en cas d'échec
+     * @param string   $event    Nom de l'événement
+     * @param callable $callback Callback à supprimer
+	 *
+     * @return bool True si l'écouteur a été supprimé avec succès
      */
     public function off(string $event, callable $callback): bool;
 
     /**
-     * @deprecated use off() instead
-     */
-    public function detach(string $event, callable $callback): bool;
-
-    /**
-     * Effacer tous les écouteurs pour un événement donné
-     */
-    public function clearListeners(?string $event = null): void;
-
-    /**
-     * Déclencher un événement
+     * Déclenche un événement
      *
-     * Peut accepter un EventInterface ou en créer un s'il n'est pas passé
-     *
-     * @param EventInterface|string $event
-     * @param object|string         $target
-     * @param array|object          $argv
-     *
-     * @return mixed
+     * @param EventInterface|string $event Objet événement ou nom de l'événement
+     * @param object|string         $target Cible/context de l'événement
+     * @param array|object          $argv   Paramètres supplémentaires
+	 *
+     * @return mixed Résultat de l'exécution des écouteurs
      */
     public function emit($event, $target = null, $argv = []);
 
     /**
-     * @deprecated use emit() instead
+     * Récupère tous les écouteurs ou ceux d'un événement spécifique
      *
-     * @param mixed      $event
-     * @param mixed|null $target
-     * @param mixed      $argv
+     * @param string|null $event Nom de l'événement (null pour tous)
+	 *
+     * @return array Liste des écouteurs
      */
-    public function trigger($event, $target = null, $argv = []);
+    public function getListeners(?string $event = null): array;
+
+    /**
+     * Supprime tous les écouteurs ou ceux d'un événement spécifique
+     *
+     * @param string|null $event Nom de l'événement (null pour tous)
+     */
+    public function clearListeners(?string $event = null): void;
 }

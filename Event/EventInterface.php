@@ -19,58 +19,73 @@ namespace BlitzPHP\Contracts\Event;
  */
 interface EventInterface
 {
-    public const PRIORITY_LOW    = 200;
-    public const PRIORITY_NORMAL = 100;
+    public const PRIORITY_LOW    = -10;
+    public const PRIORITY_NORMAL = 0;
     public const PRIORITY_HIGH   = 10;
 
     /**
-     * Obtenir le nom de l'événement
+     * Récupère le nom de l'événement
+     *
+     * @return string Le nom de l'événement
      */
     public function getName(): string;
 
     /**
-     * Obtenir la cible/le contexte à partir duquel l'événement a été déclenché
+     * Définit le nom de l'événement
      *
-     * @return object|string|null
+     * @param string $name Le nom de l'événement
+     */
+    public function setName(string $name): self;
+
+    /**
+     * Récupère la cible/context de l'événement
+     *
+     * @return object|string|null La cible de l'événement
      */
     public function getTarget();
 
     /**
-     * Obtenir les paramètres passés à l'événement
+     * Définit la cible/context de l'événement
+     *
+     * @param object|string $target La cible de l'événement
+     */
+    public function setTarget(object|string $target): self;
+
+    /**
+     * Récupère tous les paramètres de l'événement
+     *
+     * @return array Les paramètres de l'événement
      */
     public function getParams(): array;
 
     /**
-     * Obtenir un seul paramètre par nom
+     * Récupère un paramètre spécifique par son nom
      *
-     * @return mixed
+     * @param string $name   Le nom du paramètre
+     * @param mixed $default Valeur par defaut
+	 *
+     * @return mixed La valeur du paramètre ou null si non trouvé
      */
-    public function getParam(string $name);
+	public function getParam(string $name, mixed $default = null): mixed;
 
     /**
-     * Définir le nom de l'événement
-     */
-    public function setName(string $name): void;
-
-    /**
-     * Définir la cible de l'événement
+     * Définit tous les paramètres de l'événement
      *
-     * @param object|string|null $target
+     * @param array $params Les paramètres de l'événement
      */
-    public function setTarget($target): void;
+    public function setParams(array $params): self;
 
     /**
-     * Définir les paramètres de l'événement
-     */
-    public function setParams(array $params): void;
-
-    /**
-     * Indiquez si vous souhaitez ou non arrêter la propagation de cet événement
-     */
-    public function stopPropagation(bool $flag = true): void;
-
-    /**
-     * Cet événement a-t-il indiqué que la propagation de l'événement devait s'arrêter ?
+     * Vérifie si la propagation de l'événement a été arrêtée
+     *
+     * @return bool True si la propagation est arrêtée, false sinon
      */
     public function isPropagationStopped(): bool;
+
+    /**
+     * Arrête ou redémarre la propagation de l'événement
+     *
+     * @param bool $flag True pour arrêter, false pour redémarrer
+     */
+    public function stopPropagation(bool $flag = true): void;
 }

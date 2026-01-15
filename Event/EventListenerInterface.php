@@ -11,10 +11,15 @@
 
 namespace BlitzPHP\Contracts\Event;
 
+/**
+ * Interface pour les classes d'écouteurs d'événements
+ */
 interface EventListenerInterface
 {
     /**
-     * Ecouteur d'evenement
+     * Enregistre les écouteurs d'événements
+     *
+     * @param EventManagerInterface $manager Le gestionnaire d'événements
      */
     public function listen(EventManagerInterface $manager): void;
 }
