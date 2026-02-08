@@ -95,7 +95,7 @@ interface CookieInterface
     /**
      * Crée un cookie avec une valeur mise à jour
      *
-     * @param array|string|float|int|bool $value Valeur du cookie à définir
+     * @param array|bool|float|int|string $value Valeur du cookie à définir
      */
     public function withValue(mixed $value): static;
 

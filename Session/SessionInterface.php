@@ -81,7 +81,7 @@ interface SessionInterface
      * Si $data est un tableau, il est interprété comme un tableau associatif de paires clé/valeur pour les propriétés flashdata.
      * Sinon, il est interprété comme l'identifiant d'une propriété flashdata spécifique, avec $value contenant la valeur de la propriété.
      *
-     * @param array<string, mixed>|string 			  $data  Identificateur de propriété ou tableau associatif de propriétés
+     * @param array<string, mixed>|string             $data  Identificateur de propriété ou tableau associatif de propriétés
      * @param array|bool|float|int|object|string|null $value Valeur de la propriété si $data est un scalaire
      */
     public function setFlashdata(array|string $data, array|bool|float|int|object|string|null $value = null): void;
@@ -131,9 +131,9 @@ interface SessionInterface
      * Définit de nouvelles données dans la session et les marque comme données temporaires
      * avec une durée de vie définie.
      *
-     * @param array<string, mixed>|list<string>|string  $data  Clé de données de session ou tableau associatif d'éléments
-     * @param array|bool|float|int|object|string|null 	$value Valeur à stocker
-     * @param int                                       $ttl   Durée de vie en secondes
+     * @param array<string, mixed>|list<string>|string $data  Clé de données de session ou tableau associatif d'éléments
+     * @param array|bool|float|int|object|string|null  $value Valeur à stocker
+     * @param int                                      $ttl   Durée de vie en secondes
      */
     public function setTempdata(array|string $data, mixed $value = null, int $ttl = 300): void;
 
@@ -156,8 +156,8 @@ interface SessionInterface
      * Marquer une ou plusieurs données comme étant temporaires, ce qui signifie que
      * il a une durée de vie définie au sein de la session.
      *
-     * @param array<string, mixed>|list<string>|string 	$key Identificateur de propriété ou tableau d'entre eux
-     * @param int          								$ttl Durée de vie, en secondes
+     * @param array<string, mixed>|list<string>|string $key Identificateur de propriété ou tableau d'entre eux
+     * @param int                                      $ttl Durée de vie, en secondes
      *
      * @return bool False si l'une des propriétés n'a pas été définie
      */

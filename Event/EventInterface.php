@@ -61,12 +61,12 @@ interface EventInterface
     /**
      * Récupère un paramètre spécifique par son nom
      *
-     * @param string $name   Le nom du paramètre
-     * @param mixed $default Valeur par defaut
-	 *
+     * @param string $name    Le nom du paramètre
+     * @param mixed  $default Valeur par defaut
+     *
      * @return mixed La valeur du paramètre ou null si non trouvé
      */
-	public function getParam(string $name, mixed $default = null): mixed;
+    public function getParam(string $name, mixed $default = null): mixed;
 
     /**
      * Définit tous les paramètres de l'événement
