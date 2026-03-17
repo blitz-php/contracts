@@ -11,18 +11,20 @@
 
 namespace BlitzPHP\Contracts\Database;
 
-use InvalidArgumentException;
+use Closure;
 use PDO;
 
 /**
  * Interface BuilderInterface
+ *
+ * Définit les méthodes fondamentales du Query Builder.
  */
 interface BuilderInterface
 {
     /**
      * Constructor
      */
-    public function __construct(ConnectionInterface $db, ?array $options = null);
+    public function __construct(ConnectionInterface $db);
 
     /**
      * Renvoie la connexion actuelle à la base de données
@@ -32,7 +34,12 @@ interface BuilderInterface
     /**
      * Définit un statut de mode de test.
      */
-    public function testMode(bool $mode = true): self;
+    public function testMode(bool $mode = true): static;
+
+    /**
+     * Spécifie que le builder est dans un état d'attente et qu'on ne doit pas l'exécuter
+     */
+    public function pending(bool $state = true): static;
 
     /**
      * Recupere le nom de la table principale.
@@ -44,275 +51,239 @@ interface BuilderInterface
      *
      * @param list<string>|string|null $from
      */
-    public function from($from, bool $overwrite = false): self;
+    public function from($from, bool $overwrite = false): static;
 
     /**
-     *Génère la partie FROM de la requête
-     *
-     * @param list<string>|string|null $from
-     *
-     * @alias self::from()
+     * Alias de from()
      */
-    public function table($from): self;
+    public function table($from): static;
 
     /**
      * Définit la table dans laquelle les données seront insérées
      */
-    public function into(string $table): self;
+    public function into(string $table): static;
 
-    public function fromSubquery(self $builder, string $alias = ''): self;
+    /**
+     * Ajoute une sous-requête dans la clause FROM
+     */
+    public function fromSubquery(self $builder, string $alias = ''): static;
 
     /**
      * Génère la partie JOIN de la requête
      *
-     * @param string       $table  Table à joindre
-     * @param array|string $fields Champs à joindre
-     *
-     * @throws InvalidArgumentException Lorsque $fields est une chaine et qu'aucune table n'a ete au prealable definie
+     * @param string                $table Table à joindre
+     * @param array|string|Closure  $first Champs à joindre, condition, ou callback
+     * @param string|null           $operator Opérateur de comparaison
+     * @param string|null           $second Deuxième colonne pour la condition
+     * @param string                $type Type de jointure (INNER, LEFT, RIGHT, etc.)
      */
-    public function join(string $table, array|string $fields, string $type = 'INNER', bool $escape = false): self;
+    public function join(string $table, array|string|Closure $first, ?string $operator = null, $second = null, string $type = 'INNER'): static;
 
     /**
-     * Génère la partie WHERE de la requête.
-     * Sépare plusieurs appels avec 'AND'.
-     *
-     * @param array|string $field Un nom de champ ou un tableau de champs et de valeurs.
-     * @param mixed        $value Une valeur de champ à comparer
+     * Ajoute une requête UNION
      */
-    public function where($field, $value = null, bool $escape = true): self;
+    public function union(Closure|self $query, bool $all = false): static;
 
     /**
-     * Ajouter des champs pour les tri
+     * Ajoute une clause WHERE
      *
-     * @param list<string>|string $field Un nom de champ ou un tableau de champs
+     * @param array|Closure|string $column
+     * @param mixed|null $operator
+     * @param mixed|null $value
+     * @param string $boolean
      */
-    public function orderBy(array|string $field, string $direction = 'ASC', bool $escape = true): self;
+    public function where($column, $operator = null, $value = null, string $boolean = 'and'): static;
+
+    /**
+     * Ajoute une clause HAVING
+     */
+    public function having($column, $operator = null, $value = null, string $boolean = 'and'): static;
+
+    /**
+     * Ajoute des champs pour les tri
+     *
+     * @param array|string $column
+     */
+    public function orderBy($column, string $direction = 'ASC'): static;
 
     /**
      * Ajoute des champs à regrouper.
      *
-     * @param list<string>|string $field Nom de champ ou tableau de noms de champs
+     * @param array|string $column
      */
-    public function groupBy($field, bool $escape = true): self;
+    public function groupBy($column): static;
 
     /**
-     * Ajoute des conditions de type HAVING.
-     * Sépare plusieurs appels avec 'AND'.
+     * Ajoute une clause LIMIT
+     */
+    public function limit(int $limit, ?int $offset = null): static;
+
+    /**
+     * Ajoute une clause OFFSET
+     */
+    public function offset(int $offset, ?int $limit = null): static;
+
+    /**
+     * Définit les colonnes à sélectionner
      *
-     * @param array|string $field Un nom de champ ou un tableau de champs et de valeurs.
-     * @param string       $value Une valeur de champ à comparer
+     * @param array|string $columns
      */
-    public function having($field, $value = null, bool $escape = true): self;
+    public function select($columns = '*'): static;
 
     /**
-     * Ajoute une limite à la requête.
+     * Ajoute une clause DISTINCT
      */
-    public function limit(int $limit, ?int $offset = null): self;
+    public function distinct(bool $value = true): static;
 
     /**
-     * Ajoute un décalage à la requête.
+     * Ajoute une sous requete a la selection
      */
-    public function offset(int $offset, ?int $limit = null): self;
+    public function selectSubquery(self $subquery, string $as): static;
 
     /**
-     * Définit un indicateur qui indique au compilateur de chaîne de requête d'ajouter DISTINCT.
-     */
-    public function distinct(bool $value = true): self;
-
-    /**
-     * Construit une requête de sélection.
+     * Définit les valeurs pour INSERT/UPDATE
      *
-     * @param list<string>|string $fields Nom de champ ou tableau de noms de champs à sélectionner
+     * @param array|object|string $key
+     * @param mixed $value
      */
-    public function select($fields = '*', ?int $limit = null, ?int $offset = null): self;
-
-    /**
-     * Définit un indicateur qui indique au compilateur de chaîne de requête d'ajouter IGNORE.
-     */
-    public function ignore(bool $value = true): self;
+    public function set($key, $value = ''): static;
 
     /**
      * Construit une requête d'insertion.
      *
-     * @param array|object $data    Tableau ou objet de clés et de valeurs à insérer
-     * @param bool         $execute Spécifié si nous voulons exécuter directement la requête
-     *
-     * @return ResultInterface|self|string
+     * @return bool|static|string
      */
-    public function insert(array|object $data = [], bool $escape = true, bool $execute = true);
+    public function insert(array|object $data = []);
+
+    /**
+     * UPSERT (INSERT ... ON DUPLICATE KEY UPDATE)
+     *
+     * @return int|string
+     */
+    public function upsert(array $values, array $uniqueBy, ?array $update = null);
 
     /**
      * Construit une requête de mise à jour.
      *
-     * @param array|object|string $data    Tableau ou objet de clés et de valeurs, ou chaîne littérale
-     * @param bool                $execute Spécifié si nous voulons exécuter directement la requête
-     *
-     * @return ResultInterface|self|string
+     * @return int|static|string
      */
-    public function update(array|object|string $data = [], bool $escape = true, bool $execute = true);
+    public function update(array|object $data = []);
 
     /**
-     * Construit une requête de remplacement (REPLACE INTO).
+     * Construit une requête de remplacement.
      *
-     * @param array|object $data    Tableau ou objet de clés et de valeurs à remplacer
-     * @param bool         $execute Spécifié si nous voulons exécuter directement la requête
-     *
-     * @return ResultInterface|self|string
+     * @return int|static|string
      */
-    public function replace(array|object $data = [], bool $escape = true, bool $execute = true);
+    public function replace(array|object $data = []);
 
     /**
      * Construit une requête de suppression.
      *
-     * @param array $where   Conditions de suppression
-     * @param bool  $execute Spécifié si nous voulons exécuter directement la requête
-     *
-     * @return ResultInterface|self|string
+     * @return int|self|string
      */
-    public function delete(?array $where = null, ?int $limit = null, bool $execute = true);
+    public function delete(?array $where = null, ?int $limit = null);
 
     /**
-     * Allows key/value pairs to be set for insert(), update() or replace().
+     * Exécute une requête TRUNCATE
      *
-     * @param array|object|string $key   Nom du champ, ou tableau de paire champs/valeurs
-     * @param mixed               $value Valeur du champ, si $key est un simple champ
+     * @return bool|string
      */
-    public function set($key, $value = '', ?bool $escape = null): self;
+    public function truncate(?string $table = null);
 
     /**
-     * Obtient la valeur minimale d'un champ spécifié.
+     * Exécute la requête construite
      *
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return float|string float en mode reel et string (la chaîne SQL) en mode test
+     * @return ResultInterface|bool|self
      */
-    public function min(string $field, ?string $key = null, int $expire = 0);
+    public function execute();
 
     /**
-     * Obtient la valeur maximale d'un champ spécifié.
+     * Exécute une requête SQL directe
      *
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return float|string float en mode reel et string (la chaîne SQL) en mode test
-     */
-    public function max(string $field, ?string $key = null, int $expire = 0);
-
-    /**
-     * Obtient la somme des valeurs d'un champ spécifié.
-     *
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return float|string float en mode reel et string (la chaîne SQL) en mode test
-     */
-    public function sum(string $field, ?string $key = null, int $expire = 0);
-
-    /**
-     * Obtient la valeur moyenne pour un champ spécifié.
-     *
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return float|string float en mode reel et string (la chaîne SQL) en mode test
-     */
-    public function avg(string $field, ?string $key = null, int $expire = 0);
-
-    /**
-     * Obtient le nombre d'enregistrements pour une table.
-     *
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return int|string int en mode reel et string (la chaîne SQL) en mode test
-     */
-    public function count(string $field = '*', ?string $key = null, int $expire = 0);
-
-    // Méthodes d'extraction de données
-
-    /**
-     * Execute une requete sql donnée
-     *
-     * @return bool|QueryInterface|ResultInterface BaseResult quand la requete est de type "lecture", bool quand la requete est de type "ecriture", Query quand on a une requete preparee
+     * @return bool|ResultInterface
      */
     public function query(string $sql, array $params = []);
 
     /**
-     * Exécute une instruction sql.
+     * Obtient la valeur minimale d'un champ spécifié.
      *
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return bool|QueryInterface|ResultInterface BaseResult quand la requete est de type "lecture", bool quand la requete est de type "ecriture", Query quand on a une requete preparee
+     * @return float|string
      */
-    public function execute(?string $key = null, int $expire = 0);
+    public function min(string $column);
 
     /**
-     * Recupere plusieurs lignes des resultats de la reauete select.
+     * Obtient la valeur maximale d'un champ spécifié.
      *
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
+     * @return float|string
      */
-    public function result(int|string $type = PDO::FETCH_OBJ, ?string $key = null, int $expire = 0): array;
+    public function max(string $column);
 
     /**
-     * Recupere plusieurs lignes des resultats de la reauete select.
+     * Obtient la somme des valeurs d'un champ spécifié.
      *
-     * @param int|string  $type
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @alias self::result()
+     * @return float|string
      */
-    public function all($type = PDO::FETCH_OBJ, ?string $key = null, int $expire = 0): array;
+    public function sum(string $column);
 
     /**
-     * Recupere la premiere ligne des resultats de la requete select..
+     * Obtient la valeur moyenne pour un champ spécifié.
      *
-     * @param int|string  $type
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return mixed
+     * @return float|string
      */
-    public function first($type = PDO::FETCH_OBJ, ?string $key = null, int $expire = 0);
+    public function avg(string $column);
 
     /**
-     * Recupere un resultat precis dans les resultat d'une requete en BD
+     * Obtient le nombre d'enregistrements pour une table.
      *
-     * @param int|string  $type
-     * @param string|null $key    Clé de cache
-     * @param int         $expire Délai d'expiration en secondes
-     *
-     * @return mixed La ligne souhaitee
+     * @return int|string
      */
-    public function row(int $index, $type = PDO::FETCH_OBJ, ?string $key = null, int $expire = 0);
+    public function count(string $column = '*');
 
     /**
-     * Recupere la valeur d'un ou de plusieurs champs.
-     *
-     * @param list<string>|string $name   Le nom du/des champs de la base de donnees
-     * @param string|null         $key    Cle du cache
-     * @param int                 $expire Délai d'expiration en secondes
-     *
-     * @return list<mixed>|mixed La valeur du/des champs
+     * Récupère plusieurs lignes des resultats de la requete select.
      */
-    public function value(array|string $name, ?string $key = null, int $expire = 0);
+    public function result(int|string $type = PDO::FETCH_OBJ): array;
 
     /**
-     * Recupere les valeurs d'un ou de plusieurs champs.
-     *
-     * @param list<string>|string $name   Le nom du/des champs de la base de donnees
-     * @param string|null         $key    Cle du cache
-     * @param int                 $expire Délai d'expiration en secondes
-     *
-     * @return list<mixed> La/les valeurs du/des champs
+     * Récupère la premiere ligne des resultats de la requete select.
      */
-    public function values(array|string $name, ?string $key = null, int $expire = 0): array;
+    public function first(int|string $type = PDO::FETCH_OBJ): mixed;
 
     /**
-     * Recupere la requete sql courrante et reinitialise le builder.
+     * Récupère une ligne spécifique
      */
-    public function sql(bool $preserve = false): string;
+    public function row(int $index, int|string $type = PDO::FETCH_OBJ): mixed;
+
+    /**
+     * Récupère la valeur d'un ou de plusieurs champs.
+     *
+     * @param list<string>|string $name
+     *
+     * @return list<mixed>|mixed
+     */
+    public function value(array|string $name);
+
+    /**
+     * Récupère les valeurs d'un ou de plusieurs champs.
+     *
+     * @param list<string>|string $name
+     *
+     * @return list<mixed>
+     */
+    public function values(array|string $name): array;
+
+    /**
+     * Vérifie si des enregistrements existent
+     */
+    public function exists(): bool;
+
+    /**
+     * Récupère le SQL sans l'exécuter
+     */
+    public function toSql(): string;
+
+    /**
+     * Récupère le SQL avec les bindings échappés
+     */
+    public function toRawSql(): string;
 }

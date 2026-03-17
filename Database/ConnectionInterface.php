@@ -11,6 +11,8 @@
 
 namespace BlitzPHP\Contracts\Database;
 
+use PDO;
+
 /**
  * ConnectionInterface
  */
@@ -26,16 +28,9 @@ interface ConnectionInterface
     /**
      * Connexion à la base de données.
      *
-     * @return mixed
+     * @return PDO|false
      */
-    public function connect(bool $persistent = false);
-
-    /**
-     * Créez une connexion persistante à la base de données.
-     *
-     * @return mixed
-     */
-    public function persistentConnect();
+    public function connect(bool $persistent = false): mixed;
 
     /**
      * Conservez ou établissez la connexion si aucune requête n'a été envoyée pendant une durée supérieure au délai d'inactivité du serveur.
@@ -45,13 +40,14 @@ interface ConnectionInterface
     public function reconnect();
 
     /**
-     * Renvoie l'objet de connexion réel. Si une connexion 'lecture' et 'écriture' a été spécifiée,
-     * vous pouvez transmettre l'un ou l'autre terme pour obtenir cette connexion.
-     * Si vous transmettez l'un ou l'autre des alias et qu'une seule connexion est présente, il doit renvoyer la seule connexion.
-     *
-     * @return mixed
+     * Fermeture d'une connection
      */
-    public function getConnection(?string $alias = null);
+    public function close(): void;
+
+    /**
+     * Renvoie l'objet de connexion réel.
+     */
+    public function getConnection(): PDO;
 
     /**
      * Sélectionnez une table de base de données spécifique à utiliser.
@@ -75,6 +71,11 @@ interface ConnectionInterface
     public function error(): array;
 
     /**
+     * Le nom du pilote de base de données utilisé (mysql, pgsql, sqlite, etc)
+     */
+    public function getDriver(): string;
+
+    /**
      * Le nom de la plateforme utilisée (MySQLi, mssql, etc)
      */
     public function getPlatform(): string;
@@ -90,12 +91,8 @@ interface ConnectionInterface
      * Cette méthode fonctionne avec le cache.
      *
      * Doit gérer automatiquement différentes connexions pour les requêtes de lecture/écriture si nécessaire.
-     *
-     * @param mixed ...$binds
-     *
-     * @return bool|Query|ResultInterface
      */
-    public function query(string $sql, $binds = null);
+    public function query(string $sql, array $bindings = []): ResultInterface;
 
     /**
      * Effectue une requête de base sur la base de données.
@@ -109,11 +106,9 @@ interface ConnectionInterface
     /**
      * Renvoie une instance du générateur de requêtes pour cette connexion.
      *
-     * @param array|string $tableName
-     *
-     * @return BuilderInterface Builder.
+     * @param list<string>|string $tableName
      */
-    public function table($tableName);
+    public function table(array|string $tableName): BuilderInterface;
 
     /**
      * Renvoie l'objet d'instruction de la dernière requête.
@@ -133,21 +128,4 @@ interface ConnectionInterface
      * @return mixed
      */
     public function escape($str);
-
-    /**
-     * Autorise les appels personnalisés au moteur de base de données qui ne sont pas
-     * pris en charge via notre couche de base de données.
-     *
-     * @param array ...$params
-     *
-     * @return mixed
-     */
-    public function callFunction(string $functionName, ...$params);
-
-    /**
-     * Détermine si l'instruction est une requête de type écriture ou non.
-     *
-     * @param string $sql
-     */
-    public function isWriteType($sql): bool;
 }
