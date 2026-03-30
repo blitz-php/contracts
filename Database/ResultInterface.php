@@ -106,11 +106,19 @@ interface ResultInterface
     public function countColumn(): int;
 
     /**
-     * 
+     * Obtient le nombre de lignes affectées par la requête (pour les requêtes de type UPDATE, DELETE, etc.) ou le nombre de lignes dans le jeu de résultats (pour les requêtes SELECT).
      */
     public function affectedRows(): int;
 
+	/**
+	 * Obtient le nombre de lignes dans le jeu de résultats.
+	 */
     public function numRows(): int;
+
+    /**
+     * Renvoie le dernier identifiant généré par l'auto-incrémentation
+     */
+    public function lastId(): int;
 
     /**
      * Génère un tableau de noms de colonnes dans le jeu de résultats.
