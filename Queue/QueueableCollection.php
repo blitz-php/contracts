@@ -19,26 +19,26 @@ namespace BlitzPHP\Contracts\Queue;
 interface QueueableCollection
 {
     /**
-     * Get the type of the entities being queued.
+     * Récupère le type des entités mises en file d'attente.
      */
     public function getQueueableClass(): ?string;
 
     /**
-     * Get the identifiers for all of the entities.
+     * Récupère les identifiants de toutes les entités.
      *
-     * @return mixed[]
+     * @return list<mixed>
      */
     public function getQueueableIds(): array;
 
     /**
-     * Get the relationships of the entities being queued.
+     * Récupère les relations des entités mises en file d'attente.
      *
-     * @return string[]
+     * @return list<string>
      */
     public function getQueueableRelations(): array;
 
     /**
-     * Get the connection of the entities being queued.
+     * Récupère la connexion des entités mises en file d'attente.
      */
     public function getQueueableConnection(): ?string;
 }
