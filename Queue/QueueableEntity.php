@@ -19,17 +19,17 @@ namespace BlitzPHP\Contracts\Queue;
 interface QueueableEntity
 {
     /**
-     * Get the queueable identity for the entity.
+     * Récupère l'identité de l'entité pouvant être mise en file d'attente.
      */
     public function getQueueableId(): mixed;
 
     /**
-     * Get the relationships for the entity.
+     * Récupère les relations de l'entité.
      */
     public function getQueueableRelations(): array;
 
     /**
-     * Get the connection of the entity.
+     * Récupère la connexion de l'entité.
      */
     public function getQueueableConnection(): ?string;
 }
