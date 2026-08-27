@@ -19,7 +19,7 @@ use UnitEnum;
 interface Factory
 {
     /**
-     * Résout une instance de connexion de file d'attente.
+     * Résout une instance de pilote de file d'attente.
      */
-    public function connection(UnitEnum|string|null $name = null): Queue;
+    public function driver(UnitEnum|string|null $name = null): Queue;
 }

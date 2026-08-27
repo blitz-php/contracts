@@ -47,12 +47,12 @@ interface Queue
     /**
      * Ajoute un nouveau travail dans la file d'attente.
      */
-    public function push(string|Job $job, mixed $data = '', ?string $queue = null): mixed;
+    public function push(string|object $job, mixed $data = '', ?string $queue = null): mixed;
 
     /**
      * Ajoute un nouveau travail dans une file d'attente spécifique.
      */
-    public function pushOn(string $queue, string|Job $job, mixed $data = ''): mixed;
+    public function pushOn(string $queue, string|object $job, mixed $data = ''): mixed;
 
     /**
      * Ajoute une charge utile brute dans la file d'attente.
@@ -62,17 +62,17 @@ interface Queue
     /**
      * Ajoute un nouveau travail dans la file d'attente après (n) secondes.
      */
-    public function later(DateTimeInterface|DateInterval|int $delay, string|Job $job, mixed $data = '', ?string $queue = null): mixed;
+    public function later(DateTimeInterface|DateInterval|int $delay, string|object $job, mixed $data = '', ?string $queue = null): mixed;
 
     /**
      * Ajoute un nouveau travail dans une file d'attente spécifique après (n) secondes.
      */
-    public function laterOn(string $queue, DateTimeInterface|DateInterval|int $delay, string|Job $job, mixed $data = ''): mixed;
+    public function laterOn(string $queue, DateTimeInterface|DateInterval|int $delay, string|object $job, mixed $data = ''): mixed;
 
     /**
      * Ajoute un tableau de travaux dans la file d'attente.
      *
-     * @param array<string|Job> $jobs
+     * @param array<string|object> $jobs
      *
      * @return mixed
      */
